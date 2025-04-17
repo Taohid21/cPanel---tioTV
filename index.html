@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>গোলাবাড়ি সমিতি হিসাব</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(to right, #e0f7fa, #ffe0b2);
+      margin: 0;
+      padding: 20px;
+      animation: fadeIn 0.8s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+      font-weight: 600;
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+    .section {
+      background: white;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 12px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+      animation: fadeIn 1s ease;
+    }
+    input, button, textarea {
+      width: 100%;
+      padding: 14px;
+      margin: 10px 0;
+      font-size: 16px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background: #ff9800;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #f57c00;
+    }
+    .capital-display {
+      font-size: 20px;
+      font-weight: bold;
+      color: #2e7d32;
+      cursor: pointer;
+      transition: 0.4s;
+      text-align: center;
+    }
+    .record-box {
+      background: #f9fbe7;
+      padding: 14px;
+      border-radius: 10px;
+      margin: 10px 0;
+      transition: background 0.3s;
+    }
+    .income { color: green; }
+    .expense { color: red; }
+    .new-report {
+      background-color: #ffeb3b;
+      border-left: 5px solid #ff9800;
+    }
+    .old-report {
+      border: 2px solid #009688;
+      margin-top: 10px;
+      padding: 12px;
+      background-color: #f1f8e9;
+    }
+  </style>
+</head>
+<body>
+  <h1>গোলাবাড়ি সমিতি হিসাব</h1>
+  <div class="section" id="capitalSection">
+    <div class="capital-display" onclick="toggleCapital()" id="capitalDisplay"></div>
+    <input type="number" id="capitalInput" placeholder="প্রথম মূলধন লিখুন...">
+    <button onclick="setCapital()">সেভ করুন</button>
+  </div>
+
+  <div class="section">
+    <h2>নতুন রিপোর্ট লিখুন</h2>
+    <input type="number" id="income" placeholder="আজকের আয়">
+    <input type="number" id="expense" placeholder="আজকের খরচ">
+    <textarea id="note" placeholder="বর্ণনা / নোট"></textarea>
+    <button onclick="addRecord()">সংরক্ষণ করুন</button>
+  </div>
+
+  <div class="section">
+    <h2>আজকের রিপোর্ট</h2>
+    <button onclick="showTodayRecords()">আজকের রিপোর্ট দেখুন</button>
+    <div id="todayRecords"></div>
+    <div id="balance"></div>
+  </div>
+  
+  <script>
+    const capitalKey = "totalCapital";
+    const recordKey = "dailyRecords";
+
+    let capital = localStorage.getItem(capitalKey);
+    if (capital) {
+      document.getElementById("capitalInput").style.display = "none";
+      document.querySelector("#capitalSection button").style.display = "none";
+    }
+
+    function setCapital() {
+      const value = parseFloat(document.getElementById("capitalInput").value);
+      if (!isNaN(value) && value >= 0) {
+        localStorage.setItem(capitalKey, value);
+        capital = value;
+        document.getElementById("capitalInput").style.display = "none";
+        document.querySelector("#capitalSection button").style.display = "none";
+        showCapital();
+      }
+    }
+
+    function toggleCapital() {
+      const display = document.getElementById("capitalDisplay");
+      if (display.innerText === "মূলধন দেখুন") {
+        display.innerText = "মূলধন: " + parseFloat(localStorage.getItem(capitalKey) || 0).toFixed(2) + " টাকা";
+      } else {
+        display.innerText = "মূলধন দেখুন";
+      }
+    }
+
+    function showCapital() {
+      const display = document.getElementById("capitalDisplay");
+      display.innerText = "মূলধন দেখুন";
+    }
+
+    function addRecord() {
+      const income = parseFloat(document.getElementById("income").value) || 0;
+      const expense = parseFloat(document.getElementById("expense").value) || 0;
+      const note = document.getElementById("note").value.trim();
+      const today = new Date().toLocaleDateString();
+
+      const record = { date: today, income, expense, note };
+
+      let records = JSON.parse(localStorage.getItem(recordKey) || "[]");
+      records.push(record);
+
+      let total = parseFloat(localStorage.getItem(capitalKey) || 0);
+      total += income - expense;
+      localStorage.setItem(capitalKey, total);
+
+      localStorage.setItem(recordKey, JSON.stringify(records));
+      document.getElementById("income").value = '';
+      document.getElementById("expense").value = '';
+      document.getElementById("note").value = '';
+      showCapital();
+      showTodayRecords();
+    }
+
+    function showTodayRecords() {
+      const today = new Date().toLocaleDateString();
+      const records = JSON.parse(localStorage.getItem(recordKey) || "[]");
+      const todayList = records.filter(r => r.date === today);
+
+      const container = document.getElementById("todayRecords");
+      const balanceBox = document.getElementById("balance");
+      container.innerHTML = '';
+      let totalIncome = 0, totalExpense = 0;
+
+      todayList.reverse().forEach(r => {
+        container.innerHTML += `
+          <div class="record-box ${r.date === today ? 'new-report' : 'old-report'}">
+            <strong>${r.date}</strong><br>
+            <span class="income">আয়: ${r.income} টাকা</span><br>
+            <span class="expense">খরচ: ${r.expense} টাকা</span><br>
+            <small>${r.note}</small>
+          </div>
+        `;
+        totalIncome += r.income;
+        totalExpense += r.expense;
+      });
+
+      const balance = totalIncome - totalExpense;
+      balanceBox.innerHTML = `<h3>আজকের মোট আয়: ${totalIncome} | খরচ: ${totalExpense} | ব্যালেন্স: ${balance} টাকা</h3>`;
+    }
+  </script>
+</body>
+</html>
