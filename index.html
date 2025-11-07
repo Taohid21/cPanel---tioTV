@@ -1,191 +1,743 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>গোলাবাড়ি সমিতি হিসাব</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-  <style>
-    * { box-sizing: border-box; }
-    body {
-      font-family: 'Poppins', sans-serif;
-      background: linear-gradient(to right, #e0f7fa, #ffe0b2);
-      margin: 0;
-      padding: 20px;
-      animation: fadeIn 0.8s ease;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    h1 {
-      text-align: center;
-      color: #333;
-      font-weight: 600;
-      font-size: 24px;
-      margin-bottom: 20px;
-    }
-    .section {
-      background: white;
-      padding: 20px;
-      margin-bottom: 20px;
-      border-radius: 12px;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-      animation: fadeIn 1s ease;
-    }
-    input, button, textarea {
-      width: 100%;
-      padding: 14px;
-      margin: 10px 0;
-      font-size: 16px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-    }
-    button {
-      background: #ff9800;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #f57c00;
-    }
-    .capital-display {
-      font-size: 20px;
-      font-weight: bold;
-      color: #2e7d32;
-      cursor: pointer;
-      transition: 0.4s;
-      text-align: center;
-    }
-    .record-box {
-      background: #f9fbe7;
-      padding: 14px;
-      border-radius: 10px;
-      margin: 10px 0;
-      transition: background 0.3s;
-    }
-    .income { color: green; }
-    .expense { color: red; }
-    .new-report {
-      background-color: #ffeb3b;
-      border-left: 5px solid #ff9800;
-    }
-    .old-report {
-      border: 2px solid #009688;
-      margin-top: 10px;
-      padding: 12px;
-      background-color: #f1f8e9;
-    }
-  </style>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport" />
+    <title>Ti Sports - Admin Panel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet" />
+    <!-- High-Level Modern Font: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Deeper Dark Theme */
+            --primary-color: #ff4f00; /* Ti Sports Orange */
+            --bg-dark: #070911; /* Very Deep Navy/Black */
+            --card-bg: #111827; /* Dark Slate 900 */
+            --accent-light: #1f2937; /* Input/Subtle Accent */
+            --text-color: #e5e7eb;
+html {
+    /* স্ক্রলবারটিকে সব সময় দৃশ্যমান রাখে, যাতে লেআউট না নড়ে */
+    overflow-y: scroll; 
+}
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-color); 
+            transition: all 0.3s ease;
+        }
+        .admin-btn {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: background-color 0.2s, transform 0.1s, box-shadow 0.3s;
+            box-shadow: 0 5px 15px rgba(255, 79, 0, 0.4); /* Brighter Shadow */
+            border: 1px solid transparent;
+        }
+        .admin-btn:hover { 
+            background-color: #e04500; 
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 79, 0, 0.6);
+        }
+        /* Custom Tab Styling */
+        .tab-btn {
+            padding: 12px 20px;
+            transition: color 0.2s, background-color 0.2s;
+            border-radius: 6px 6px 0 0;
+            flex-shrink: 0;
+            border-bottom: 3px solid transparent;
+        }
+        .tab-btn:hover {
+            color: white;
+            background-color: #1f2937;
+        }
+        .tab-btn.active {
+            border-bottom: 3px solid var(--primary-color);
+            color: var(--primary-color);
+            font-weight: 700;
+            background-color: #111827;
+        }
+        .modal-overlay { 
+            background-color: rgba(0, 0, 0, 0.9); /* Darker overlay */
+        }
+        .input-style {
+            background-color: var(--accent-light);
+            border: 1px solid #374151; /* Slate 700 */
+            color: var(--text-color);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .input-style:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(255, 79, 0, 0.5);
+            background-color: #0f172a;
+        }
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid #1f2937; 
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.3), 0 5px 15px -5px rgba(0, 0, 0, 0.2);
+        }
+        .data-table th {
+            text-transform: uppercase;
+            font-size: 0.7rem;
+            color: #9ca3af; /* Gray 400 */
+            letter-spacing: 0.08em;
+            background-color: #1f2937; /* Darker header for contrast */
+        }
+        .data-table tr:nth-child(even) {
+            background-color: rgba(255, 255, 255, 0.03); /* Subtle Zebra Stripe */
+        }
+        .data-table tr:hover {
+            background-color: #2a3447 !important; 
+            cursor: pointer;
+        }
+        
+        /* Custom Scrollbar for dark theme */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-thumb { background: var(--primary-color); border-radius: 10px; }
+        ::-webkit-scrollbar-track { background: var(--card-bg); }
+    </style>
 </head>
 <body>
-  <h1>গোলাবাড়ি সমিতি হিসাব</h1>
-  <div class="section" id="capitalSection">
-    <div class="capital-display" onclick="toggleCapital()" id="capitalDisplay"></div>
-    <input type="number" id="capitalInput" placeholder="প্রথম মূলধন লিখুন...">
-    <button onclick="setCapital()">সেভ করুন</button>
-  </div>
 
-  <div class="section">
-    <h2>নতুন রিপোর্ট লিখুন</h2>
-    <input type="number" id="income" placeholder="আজকের আয়">
-    <input type="number" id="expense" placeholder="আজকের খরচ">
-    <textarea id="note" placeholder="বর্ণনা / নোট"></textarea>
-    <button onclick="addRecord()">সংরক্ষণ করুন</button>
-  </div>
+    <!-- 1. High-Level Login Screen -->
+    <div id="login-screen" class="min-h-screen flex items-center justify-center">
+        <div class="card w-full max-w-md p-6 sm:p-10 text-center mx-4 border-t-4 border-[var(--primary-color)]">
+            <div class="text-5xl font-extrabold text-[var(--primary-color)] mb-2 tracking-wide">Ti Sports</div>
+            <h2 class="text-2xl font-light mb-8 text-gray-300">Secure Admin Console</h2>
+            
+            <div id="login-error" class="bg-red-700/50 text-white p-3 rounded-lg mb-6 text-sm flex items-center justify-center border border-red-600 hidden">
+                <i class="fas fa-exclamation-triangle mr-2"></i> Invalid credentials.
+            </div>
+            
+            <form id="login-form" class="space-y-5">
+                <div class="relative">
+                    <i class="fas fa-user absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" id="admin-user" placeholder="Username" class="input-style w-full p-3 pl-12 rounded-lg">
+                </div>
+                <div class="relative">
+                    <i class="fas fa-lock absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    <input type="password" id="admin-pass" placeholder="Password" class="input-style w-full p-3 pl-12 rounded-lg">
+                </div>
+                <button type="submit" id="login-btn" class="admin-btn w-full mt-8 text-lg">
+                    <i class="fas fa-sign-in-alt mr-2"></i> Access Dashboard
+                </button>
+            </form>
+        </div>
+    </div>
 
-  <div class="section">
-    <h2>আজকের রিপোর্ট</h2>
-    <button onclick="showTodayRecords()">আজকের রিপোর্ট দেখুন</button>
-    <div id="todayRecords"></div>
-    <div id="balance"></div>
-  </div>
-  
-  <script>
-    const capitalKey = "totalCapital";
-    const recordKey = "dailyRecords";
+    <!-- 2. Main Dashboard (App Feel) -->
+    <div id="dashboard" class="hidden min-h-screen flex flex-col">
+        <header class="bg-gray-900 shadow-2xl sticky top-0 z-20 border-b border-gray-700">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+                <h1 class="text-3xl font-bold text-white tracking-wider flex items-center">
+                    <span class="text-[var(--primary-color)] font-extrabold text-4xl mr-1">c</span>Panel                </h1>
+                <button id="logout-btn" class="text-sm text-gray-400 hover:text-red-400 transition-colors p-2 rounded-lg bg-gray-800 hover:bg-red-900/30">
+                    <i class="fas fa-sign-out-alt mr-1"></i> Logout
+                </button>
+            </div>
+            
+            <!-- Horizontal Navigation Tabs (Enhanced App Look) -->
+            <nav class="flex overflow-x-auto max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-gray-800 whitespace-nowrap bg-gray-900/80 backdrop-blur-sm">
+                <button class="tab-btn text-gray-400 active" data-collection="banners"><i class="fas fa-image mr-2"></i> Banner</button>
+                <button class="tab-btn text-gray-400" data-collection="liveTV"><i class="fas fa-tv mr-2"></i> TV</button>
+                <button class="tab-btn text-gray-400" data-collection="moviesSections"><i class="fas fa-film mr-2"></i> Movies</button>
+                <button class="tab-btn text-gray-400" data-collection="cricketSections"><i class="fas fa-baseball-bat-ball mr-2"></i> Cricket</button>
+            </nav>
+        </header>
 
-    let capital = localStorage.getItem(capitalKey);
-    if (capital) {
-      document.getElementById("capitalInput").style.display = "none";
-      document.querySelector("#capitalSection button").style.display = "none";
-    }
+        <main class="flex-grow max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+            <!-- Header and Action Button -->
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 pb-4 border-b border-gray-800">
+                <h2 id="current-title" class="text-3xl font-extrabold text-white mb-3 sm:mb-0">
+                    <i class="fas fa-tachometer-alt text-[var(--primary-color)] mr-2"></i> Dashboard Overview
+                </h2>
+                <button id="add-new-btn" class="admin-btn hidden text-sm">
+                    <i class="fas fa-plus mr-2"></i> Add New Item/Section
+                </button>
+            </div>
+            
+            <!-- Main Content Area - Primary List/Sections -->
+            <div id="content-area" class="card p-0 overflow-hidden min-h-[300px]">
+                <p class="text-gray-500 text-center py-20 text-lg">
+                    <i class="fas fa-mouse-pointer mr-2 text-[var(--primary-color)]"></i> Select a category from the tabs above to begin managing content.
+                </p>
+            </div>
+            
+            <!-- Items Management Area (Nested) - Visually distinct -->
+            <div id="section-items-area" class="mt-8 card hidden border-l-4 border-sky-500">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 pb-4">
+                    <h3 id="items-title" class="text-xl font-bold text-sky-400">Section Items</h3>
+                    <button id="add-item-btn" class="admin-btn text-sm mt-3 sm:mt-0 bg-sky-600 hover:bg-sky-700 shadow-none">
+                        <i class="fas fa-plus-circle mr-2"></i> Add New Item
+                    </button>
+                </div>
+                <div id="items-table-container" class="overflow-x-auto">
+                    <!-- Items table will load here -->
+                </div>
+            </div>
+        </main>
+    </div>
 
-    function setCapital() {
-      const value = parseFloat(document.getElementById("capitalInput").value);
-      if (!isNaN(value) && value >= 0) {
-        localStorage.setItem(capitalKey, value);
-        capital = value;
-        document.getElementById("capitalInput").style.display = "none";
-        document.querySelector("#capitalSection button").style.display = "none";
-        showCapital();
-      }
-    }
+    <!-- 3. Dynamic Modal -->
+    <div id="data-modal" class="modal-overlay fixed inset-0 z-50 flex items-center justify-center p-4 transition-opacity duration-300 hidden">
+        <div class="card w-full max-w-lg shadow-2xl transition-transform duration-300 transform scale-95 opacity-0 border-t-4 border-[var(--primary-color)]" id="modal-content-wrapper">
+            <h3 id="modal-title" class="text-2xl font-bold mb-5 text-white border-b border-gray-700 pb-3">Add/Edit Content</h3>
+            <form id="data-form" class="space-y-4">
+                <div id="modal-fields-container" class="max-h-[70vh] overflow-y-auto pr-2 custom-scroll"></div>
+                <div class="flex justify-end space-x-3 pt-4 border-t border-gray-700 mt-6">
+                    <button type="button" id="modal-cancel-btn" class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition">
+                        <i class="fas fa-times-circle mr-1"></i> Cancel
+                    </button>
+                    <button type="submit" id="modal-save-btn" class="admin-btn">
+                        <i class="fas fa-save mr-1"></i> Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Firebase SDK and JavaScript Logic -->
+    <script type="module">
+        // Ensure you replace this with your actual Firebase config
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        import { getFirestore, collection, getDocs, query, orderBy, doc, setDoc, deleteDoc, addDoc, updateDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        
+        // --- Firebase Configuration ---
+        const firebaseConfig = { apiKey: "AIzaSyAb8YsPMOY53GxiycCL6G0MPZdgWe3nnyY", authDomain: "movie-92659.firebaseapp.com", projectId: "movie-92659", storageBucket: "movie-92659.appspot.com", messagingSenderId: "1090734362509", appId: "1:1090734362509:web:86be5583f6e8fcfdfa77c4" };
+        
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
 
-    function toggleCapital() {
-      const display = document.getElementById("capitalDisplay");
-      if (display.innerText === "মূলধন দেখুন") {
-        display.innerText = "মূলধন: " + parseFloat(localStorage.getItem(capitalKey) || 0).toFixed(2) + " টাকা";
-      } else {
-        display.innerText = "মূলধন দেখুন";
-      }
-    }
+        // --- Credentials ---
+        const ADMIN_USER = 't';
+        const ADMIN_PASS = 't'; 
 
-    function showCapital() {
-      const display = document.getElementById("capitalDisplay");
-      display.innerText = "মূলধন দেখুন";
-    }
+        // --- UI Elements ---
+        const UI = {
+            loginScreen: document.getElementById('login-screen'),
+            loginForm: document.getElementById('login-form'), 
+            dashboard: document.getElementById('dashboard'),
+            loginBtn: document.getElementById('login-btn'),
+            logoutBtn: document.getElementById('logout-btn'),
+            loginError: document.getElementById('login-error'),
+            contentArea: document.getElementById('content-area'),
+            sectionItemsArea: document.getElementById('section-items-area'),
+            addBtn: document.getElementById('add-new-btn'),
+            itemAddBtn: document.getElementById('add-item-btn'),
+            currentTitle: document.getElementById('current-title'),
+            itemsTitle: document.getElementById('items-title'),
+            itemsTableContainer: document.getElementById('items-table-container'),
+            
+            // Modal
+            modal: document.getElementById('data-modal'),
+            modalContentWrapper: document.getElementById('modal-content-wrapper'),
+            modalTitle: document.getElementById('modal-title'),
+            modalFieldsContainer: document.getElementById('modal-fields-container'),
+            dataForm: document.getElementById('data-form'),
+            modalCancelBtn: document.getElementById('modal-cancel-btn'),
+        };
 
-    function addRecord() {
-      const income = parseFloat(document.getElementById("income").value) || 0;
-      const expense = parseFloat(document.getElementById("expense").value) || 0;
-      const note = document.getElementById("note").value.trim();
-      const today = new Date().toLocaleDateString();
+        // --- State Management ---
+        const State = {
+            currentCollection: null, 
+            currentSectionId: null, 
+            editingId: null,
+            editingParentCollection: null, 
+        };
 
-      const record = { date: today, income, expense, note };
+        // --- Data Schemas ---
+        const SCHEMAS = {
+            banners: [
+                { name: 'title', label: 'Title', type: 'text', required: true },
+                { name: 'posterUrl', label: 'Poster URL (16:9 Banner)', type: 'url', required: true },
+                { name: 'link', label: 'Content Link (e.g. moviesSections/id/items/id)', type: 'text', required: true },
+                { name: 'order', label: 'Order', type: 'number', required: true, default: 0 }
+            ],
+            liveTV: [
+                { name: 'name', label: 'Channel Name', type: 'text', required: true },
+                { name: 'logoUrl', label: 'Logo URL (1:1 Icon)', type: 'url', required: true },
+                { name: 'streamUrl', label: 'Redirect Link (m3u8 or website)', type: 'url', required: true },
+                { name: 'order', label: 'Order', type: 'number', required: true, default: 0 }
+            ],
+            sections: [ 
+                { name: 'title', label: 'Section Title', type: 'text', required: true },
+                { name: 'order', label: 'Order', type: 'number', required: true, default: 0 }
+            ],
+            items: (type) => [ 
+                { name: 'title', label: 'Title', type: 'text', required: true },
+                { name: 'posterUrl', label: `Poster URL (${type === 'cricket' ? '16:9 Thumbnail' : '2:3 Poster'})`, type: 'url', required: true },
+                { name: 'videoUrl', label: 'Video URL (M3U8/MP4/iFrame)', type: 'url', required: true },
+                { name: 'description', label: 'Description', type: 'textarea', required: false },
+                { name: 'order', label: 'Order', type: 'number', required: true, default: 0 },
+                ...(type === 'cricket' ? [
+                    { name: 'isLive', label: 'Is Live / Featured Match', type: 'boolean', required: false, default: false }
+                ] : [])
+            ]
+        };
+        
+        // Helper function to fetch single item data for modal loading
+        async function loadItemForEditing(collectionName, itemId, parentPath, schema) {
+            try {
+                const finalPath = parentPath ? `${parentPath}/${itemId}` : `${collectionName}/${itemId}`;
+                const docRef = doc(db, finalPath);
+                const docSnap = await getDoc(docRef);
 
-      let records = JSON.parse(localStorage.getItem(recordKey) || "[]");
-      records.push(record);
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    schema.forEach(field => {
+                        const input = document.getElementById(field.name);
+                        if (!input) return;
 
-      let total = parseFloat(localStorage.getItem(capitalKey) || 0);
-      total += income - expense;
-      localStorage.setItem(capitalKey, total);
+                        if (field.type === 'boolean') {
+                            input.checked = !!data[field.name];
+                        } else if (data[field.name] !== undefined) {
+                            input.value = data[field.name];
+                        }
+                    });
+                } else {
+                    console.warn("No such document!", finalPath);
+                }
+            } catch (error) {
+                console.error("Error loading item for edit:", error);
+                alert("Could not load item data.");
+            }
+        }
 
-      localStorage.setItem(recordKey, JSON.stringify(records));
-      document.getElementById("income").value = '';
-      document.getElementById("expense").value = '';
-      document.getElementById("note").value = '';
-      showCapital();
-      showTodayRecords();
-    }
+        // --- Authentication Functions ---
+        
+        function handleLogin(e) {
+            e.preventDefault(); 
+            const user = document.getElementById('admin-user').value;
+            const pass = document.getElementById('admin-pass').value;
 
-    function showTodayRecords() {
-      const today = new Date().toLocaleDateString();
-      const records = JSON.parse(localStorage.getItem(recordKey) || "[]");
-      const todayList = records.filter(r => r.date === today);
+            UI.loginBtn.disabled = true;
+            UI.loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Logging In...';
 
-      const container = document.getElementById("todayRecords");
-      const balanceBox = document.getElementById("balance");
-      container.innerHTML = '';
-      let totalIncome = 0, totalExpense = 0;
+            setTimeout(() => { // Simulate network delay
+                if (user === ADMIN_USER && pass === ADMIN_PASS) {
+                    localStorage.setItem('adminLoggedIn', 'true');
+                    UI.loginError.classList.add('hidden');
+                    loadInitialView();
+                } else {
+                    UI.loginError.textContent = 'Invalid credentials. Please try again.';
+                    UI.loginError.classList.remove('hidden');
+                    UI.loginBtn.innerHTML = '<i class="fas fa-sign-in-alt mr-2"></i> Access Dashboard';
+                    UI.loginBtn.disabled = false;
+                }
+            }, 500);
+        }
 
-      todayList.reverse().forEach(r => {
-        container.innerHTML += `
-          <div class="record-box ${r.date === today ? 'new-report' : 'old-report'}">
-            <strong>${r.date}</strong><br>
-            <span class="income">আয়: ${r.income} টাকা</span><br>
-            <span class="expense">খরচ: ${r.expense} টাকা</span><br>
-            <small>${r.note}</small>
-          </div>
-        `;
-        totalIncome += r.income;
-        totalExpense += r.expense;
-      });
+        function handleLogout() {
+            localStorage.removeItem('adminLoggedIn');
+            loadInitialView();
+        }
 
-      const balance = totalIncome - totalExpense;
-      balanceBox.innerHTML = `<h3>আজকের মোট আয়: ${totalIncome} | খরচ: ${totalExpense} | ব্যালেন্স: ${balance} টাকা</h3>`;
-    }
-  </script>
+        function isAuthenticated() {
+            return localStorage.getItem('adminLoggedIn') === 'true';
+        }
+
+        // --- Utility and CRUD functions (unchanged logic) ---
+
+        function showLoading(element) {
+            element.innerHTML = '<div class="text-center py-16 text-gray-500"><i class="fas fa-spinner fa-spin fa-3x text-[var(--primary-color)]"></i><p class="mt-4 text-lg">Loading data, please wait...</p></div>';
+        }
+        
+        async function fetchData(collectionName) {
+            State.currentSectionId = null;
+            showLoading(UI.contentArea);
+            UI.sectionItemsArea.classList.add('hidden'); 
+
+            try {
+                const q = query(collection(db, collectionName), orderBy("order", "asc"));
+                const snapshot = await getDocs(q);
+                const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderCollectionTable(collectionName, data);
+            } catch (error) {
+                console.error("Error fetching data:", error);
+                UI.contentArea.innerHTML = `<p class="text-center py-20 text-red-400"><i class="fas fa-exclamation-circle mr-2"></i> Error loading data: ${error.message}</p>`;
+            }
+        }
+        
+        async function fetchSectionItems(collectionType, sectionId, sectionTitle) {
+            showLoading(UI.itemsTableContainer);
+            State.currentSectionId = sectionId;
+            State.editingParentCollection = collectionType;
+            UI.sectionItemsArea.classList.remove('hidden');
+            UI.itemsTitle.textContent = `Items in Section: "${sectionTitle}"`;
+
+            try {
+                const itemPath = `${collectionType}/${sectionId}/items`;
+                const q = query(collection(db, itemPath), orderBy("order", "asc"));
+                const snapshot = await getDocs(q);
+                const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data(), parentPath: itemPath }));
+                renderItemsTable(data, itemPath);
+            } catch (error) {
+                console.error("Error fetching items:", error);
+                UI.itemsTableContainer.innerHTML = `<p class="text-center py-20 text-red-400"><i class="fas fa-exclamation-circle mr-2"></i> Error loading items: ${error.message}</p>`;
+            }
+        }
+
+        async function deleteItem(collectionName, id, parentPath = null) {
+            const finalPath = parentPath ? `${parentPath}/${id}` : `${collectionName}/${id}`;
+            const displayName = parentPath ? `Section Item ${id.substring(0, 5)}...` : `${collectionName} Entry ${id.substring(0, 5)}...`;
+
+            if (!confirm(`CONFIRM DELETION: Are you sure you want to delete ${displayName}? This action is irreversible.`)) return;
+            
+            try {
+                await deleteDoc(doc(db, finalPath));
+                alert("Content deleted successfully!");
+                
+                // Refresh Logic
+                if (parentPath) {
+                    const sectionId = State.currentSectionId;
+                    const sectionDoc = await getDoc(doc(db, State.editingParentCollection, sectionId));
+                    const sectionTitle = sectionDoc.exists() ? sectionDoc.data().title : 'Unknown';
+                    fetchSectionItems(State.editingParentCollection, sectionId, sectionTitle);
+                } else {
+                    fetchData(collectionName);
+                }
+            } catch (error) {
+                console.error("Error deleting item:", error);
+                alert("Error deleting item: " + error.message);
+            }
+        }
+
+        // --- Rendering Functions ---
+
+        function renderCollectionTable(collectionName, data) {
+            UI.contentArea.innerHTML = '';
+            
+            const isSectionCollection = collectionName.endsWith('Sections');
+            const schema = isSectionCollection ? SCHEMAS.sections : SCHEMAS[collectionName];
+            
+            if (data.length === 0) {
+                 UI.contentArea.innerHTML = '<p class="text-center py-20 text-gray-500 text-lg"><i class="fas fa-info-circle mr-2"></i> No items found. Click "Add New" to create one.</p>';
+                 return;
+            }
+
+            const headersToShow = schema.filter(s => ['title', 'name', 'posterUrl', 'logoUrl', 'order'].includes(s.name));
+
+            let tableHeaders = headersToShow.map(s => `<th class="p-4 text-left font-semibold">${s.label}</th>`).join('');
+            
+            if (isSectionCollection) {
+                tableHeaders += `<th class="p-4 text-center font-semibold">Content</th>`;
+            }
+            tableHeaders += `<th class="p-4 text-right font-semibold">Actions</th>`;
+
+            let tableHTML = `<div class="overflow-x-auto"><table class="min-w-full divide-y divide-gray-800 data-table rounded-xl"><thead><tr class="bg-gray-800">${tableHeaders}</tr></thead><tbody class="divide-y divide-gray-800">`;
+
+            data.forEach(item => {
+                let rowData = headersToShow.map(s => {
+                    let value = item[s.name];
+                    let cellContent = '<span class="text-gray-500 text-sm">N/A</span>';
+                    
+                    if (s.name === 'logoUrl' || s.name === 'posterUrl') {
+                        const aspect = s.name === 'logoUrl' ? 'aspect-square' : 'aspect-video';
+                        cellContent = `<img src="${value}" alt="Thumb" class="h-10 w-16 object-cover rounded-md ${aspect} shadow-lg" onerror="this.src='https://via.placeholder.com/60x40.png?text=Ti'">`;
+                    } else if (s.name === 'title' || s.name === 'name') {
+                        cellContent = `<span class="font-semibold text-white">${value}</span>`;
+                    } else if (value !== undefined) {
+                         cellContent = `<span class="font-medium text-gray-300">${value}</span>`;
+                    }
+                    return `<td class="p-4 text-sm">${cellContent}</td>`;
+                }).join('');
+
+                let sectionBtn = '';
+                if (isSectionCollection) {
+                    sectionBtn = `<td class="p-4 text-center">
+                        <button class="text-sky-400 hover:text-sky-300 manage-items-btn text-xs font-bold p-2 rounded-full bg-sky-900/40 hover:bg-sky-900/60 transition" data-id="${item.id}" data-type="${collectionName}" data-title="${item.title}">
+                            <i class="fas fa-cubes mr-1"></i> Manage Items
+                        </button>
+                    </td>`;
+                }
+
+                tableHTML += `<tr data-id="${item.id}" class="transition-colors duration-150">
+                    ${rowData}
+                    ${sectionBtn}
+                    <td class="p-4 text-right space-x-2 whitespace-nowrap">
+                        <button class="text-yellow-500 hover:text-yellow-400 edit-btn p-2 rounded-full bg-gray-700/50 hover:bg-gray-700 transition" data-id="${item.id}" data-collection="${collectionName}" title="Edit"><i class="fas fa-edit"></i></button>
+                        <button class="text-red-500 hover:text-red-400 delete-btn p-2 rounded-full bg-gray-700/50 hover:bg-gray-700 transition" data-id="${item.id}" data-collection="${collectionName}" title="Delete"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>`;
+            });
+
+            tableHTML += `</tbody></table></div>`;
+            UI.contentArea.innerHTML = tableHTML;
+            setupTableEventHandlers(collectionName);
+        }
+
+        function renderItemsTable(data, parentPath) {
+            const collectionType = State.editingParentCollection;
+            
+            if (data.length === 0) {
+                 UI.itemsTableContainer.innerHTML = '<p class="text-center py-20 text-gray-500 text-lg"><i class="fas fa-info-circle mr-2"></i> No items in this section. Click "Add New Item" above.</p>';
+                 return;
+            }
+            
+            const schema = SCHEMAS.items(collectionType === 'cricketSections' ? 'cricket' : 'movies');
+            const headersToShow = schema.filter(s => ['title', 'posterUrl', 'isLive', 'order'].includes(s.name));
+
+            let tableHeaders = headersToShow.map(s => `<th class="p-4 text-left font-semibold">${s.label}</th>`).join('');
+            tableHeaders += `<th class="p-4 text-right font-semibold">Actions</th>`;
+
+            let tableHTML = `<div class="overflow-x-auto"><table class="min-w-full divide-y divide-gray-800 data-table"><thead><tr class="bg-gray-800">${tableHeaders}</tr></thead><tbody class="divide-y divide-gray-800">`;
+
+            data.forEach(item => {
+                let rowData = headersToShow.map(s => {
+                    let value = item[s.name];
+                    let cellContent = '<span class="text-gray-500 text-sm">N/A</span>';
+                    
+                    if (s.name === 'posterUrl') {
+                        const aspect = collectionType === 'cricketSections' ? 'aspect-video' : 'aspect-[2/3]';
+                        cellContent = `<img src="${value}" alt="Thumb" class="h-12 w-auto object-cover rounded-md ${aspect} shadow-md" onerror="this.src='https://via.placeholder.com/60x90.png?text=Ti'">`;
+                    } else if (s.name === 'isLive') {
+                        cellContent = item[s.name] ? '<span class="px-3 py-1 text-xs font-bold bg-red-600 rounded-full text-white shadow-lg shadow-red-500/30"><i class="fas fa-signal text-xs mr-1"></i> LIVE</span>' : '<span class="px-3 py-1 text-xs font-semibold bg-gray-600 rounded-full text-gray-300">Default</span>';
+                    } else if (value !== undefined) {
+                         cellContent = `<span class="font-medium text-gray-300">${value}</span>`;
+                    }
+                    return `<td class="p-4 text-sm">${cellContent}</td>`;
+                }).join('');
+
+                tableHTML += `<tr data-id="${item.id}" class="transition-colors duration-150">
+                    ${rowData}
+                    <td class="p-4 text-right space-x-2 whitespace-nowrap">
+                        <button class="text-yellow-500 hover:text-yellow-400 edit-item-btn p-2 rounded-full bg-gray-700/50 hover:bg-gray-700 transition" data-id="${item.id}" data-parent-path="${parentPath}" title="Edit Item"><i class="fas fa-edit"></i></button>
+                        <button class="text-red-500 hover:text-red-400 delete-item-btn p-2 rounded-full bg-gray-700/50 hover:bg-gray-700 transition" data-id="${item.id}" data-parent-path="${parentPath}" title="Delete Item"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>`;
+            });
+
+            tableHTML += `</tbody></table></div>`;
+            UI.itemsTableContainer.innerHTML = tableHTML;
+            setupItemTableEventHandlers();
+        }
+
+        // --- Modal & Form Logic ---
+
+        function openModal(collectionName, itemId = null, parentPath = null) {
+            State.editingId = itemId;
+            State.editingParentCollection = collectionName;
+            
+            let schema;
+            let isItemEdit = !!parentPath || (itemId && State.currentSectionId);
+
+            if (isItemEdit) { 
+                const type = collectionName === 'cricketSections' ? 'cricket' : 'movies';
+                schema = SCHEMAS.items(type);
+                UI.modalTitle.innerHTML = itemId ? `<i class="fas fa-edit mr-2 text-[var(--primary-color)]"></i> Edit Section Item` : `<i class="fas fa-plus-square mr-2 text-[var(--primary-color)]"></i> Add New Section Item`;
+            } else { 
+                schema = collectionName.endsWith('Sections') ? SCHEMAS.sections : SCHEMAS[collectionName];
+                UI.modalTitle.innerHTML = itemId ? `<i class="fas fa-edit mr-2 text-[var(--primary-color)]"></i> Edit ${collectionName}` : `<i class="fas fa-plus-square mr-2 text-[var(--primary-color)]"></i> Add New ${collectionName.replace('Sections', ' Section')}`;
+            }
+
+            // Generate Form Fields
+            UI.modalFieldsContainer.innerHTML = schema.map(field => {
+                const required = field.required ? 'required' : '';
+                const baseClass = 'input-style w-full p-3 rounded-lg focus:ring-1';
+                
+                let inputHtml;
+                if (field.type === 'textarea') {
+                    inputHtml = `<textarea id="${field.name}" name="${field.name}" class="${baseClass}" rows="4" ${required} placeholder="Enter ${field.label}..."></textarea>`;
+                } else if (field.type === 'boolean') {
+                    inputHtml = `<div class="flex items-center space-x-3 p-3 bg-gray-700 rounded-lg">
+                        <input type="checkbox" id="${field.name}" name="${field.name}" class="h-5 w-5 rounded border-gray-600 checked:bg-[var(--primary-color)] focus:ring-[var(--primary-color)] text-[var(--primary-color)]">
+                        <label for="${field.name}" class="text-gray-200 font-medium cursor-pointer">${field.label}</label>
+                    </div>`;
+                } else if (field.type === 'number') {
+                     inputHtml = `<input type="number" id="${field.name}" name="${field.name}" class="${baseClass}" ${required} value="${field.default || ''}" placeholder="E.g., 10">`;
+                }
+                else {
+                    inputHtml = `<input type="${field.type}" id="${field.name}" name="${field.name}" class="${baseClass}" ${required} value="${field.default || ''}" placeholder="Enter ${field.label}">`;
+                }
+                
+                return `<div><label for="${field.name}" class="block text-sm font-semibold mb-2 text-gray-300">${field.label}${field.required ? ' <span class="text-red-500">*</span>' : ''}</label>${inputHtml}</div>`;
+            }).join('');
+
+            // Load Existing Data
+            if (itemId) {
+                 loadItemForEditing(collectionName, itemId, parentPath, schema);
+            }
+            
+            // Show modal with transition effects
+            UI.modal.classList.remove('hidden');
+            setTimeout(() => {
+                UI.modal.style.opacity = '1';
+                UI.modalContentWrapper.classList.remove('scale-95', 'opacity-0');
+                UI.modalContentWrapper.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function closeModal() {
+            UI.modalContentWrapper.classList.add('scale-95', 'opacity-0');
+            UI.modalContentWrapper.classList.remove('scale-100', 'opacity-100');
+            setTimeout(() => {
+                UI.modal.classList.add('hidden');
+                UI.dataForm.reset();
+                State.editingId = null;
+            }, 300); 
+        }
+
+        async function handleSubmit(e) {
+            e.preventDefault();
+            
+            const collectionName = State.editingParentCollection || State.currentCollection;
+            const itemId = State.editingId;
+
+            let schema;
+            let finalCollectionPath;
+            let isItemOperation = !!State.currentSectionId;
+            let isUpdate = !!itemId;
+
+            if (isItemOperation) {
+                const type = collectionName === 'cricketSections' ? 'cricket' : 'movies';
+                schema = SCHEMAS.items(type);
+                finalCollectionPath = `${collectionName}/${State.currentSectionId}/items`;
+            } else {
+                schema = collectionName.endsWith('Sections') ? SCHEMAS.sections : SCHEMAS[collectionName];
+                finalCollectionPath = collectionName;
+            }
+
+            const formData = {};
+            schema.forEach(field => {
+                const input = document.getElementById(field.name);
+                if (!input) return;
+                
+                if (field.type === 'number') {
+                    formData[field.name] = isNaN(parseInt(input.value)) ? 0 : parseInt(input.value);
+                } else if (field.type === 'boolean') {
+                    formData[field.name] = input.checked;
+                } else {
+                    formData[field.name] = input.value;
+                }
+            });
+
+            try {
+                if (isUpdate) {
+                    await updateDoc(doc(db, finalCollectionPath, itemId), formData);
+                } else {
+                    if (isItemOperation) {
+                        formData.createdAt = serverTimestamp();
+                    }
+                    await addDoc(collection(db, finalCollectionPath), formData);
+                }
+                
+                closeModal();
+                
+                // Refresh data based on context
+                if (isItemOperation) {
+                    const sectionId = State.currentSectionId;
+                    const sectionDoc = await getDoc(doc(db, collectionName, sectionId));
+                    const sectionTitle = sectionDoc.exists() ? sectionDoc.data().title : 'Unknown';
+                    fetchSectionItems(collectionName, sectionId, sectionTitle);
+                } else {
+                    fetchData(collectionName);
+                }
+                alert(`Content successfully ${isUpdate ? 'updated' : 'added'}!`);
+
+            } catch (error) {
+                console.error("Error saving data:", error);
+                alert("Error saving data: " + error.message);
+            }
+        }
+
+        // --- Event Listener Setup ---
+        
+        function setupTableEventHandlers(collectionName) {
+            UI.contentArea.querySelectorAll('.edit-btn').forEach(btn => {
+                btn.onclick = (e) => { e.stopPropagation(); openModal(collectionName, btn.dataset.id); };
+            });
+            UI.contentArea.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.onclick = (e) => { e.stopPropagation(); deleteItem(collectionName, btn.dataset.id); };
+            });
+
+            UI.contentArea.querySelectorAll('.manage-items-btn').forEach(btn => {
+                btn.onclick = (e) => {
+                    e.stopPropagation();
+                    UI.currentTitle.innerHTML = `<i class="fas fa-cubes text-sky-400 mr-2"></i> Items in: ${btn.dataset.title}`;
+                    fetchSectionItems(btn.dataset.type, btn.dataset.id, btn.dataset.title);
+                };
+            });
+             // Add click to edit functionality on rows if not a section management row
+             if (!collectionName.endsWith('Sections')) {
+                UI.contentArea.querySelectorAll('.data-table tbody tr').forEach(row => {
+                    row.onclick = () => { openModal(collectionName, row.dataset.id); };
+                });
+             }
+        }
+        
+        function setupItemTableEventHandlers() {
+             UI.itemsTableContainer.querySelectorAll('.edit-item-btn').forEach(btn => {
+                btn.onclick = (e) => { e.stopPropagation(); openModal(State.editingParentCollection, btn.dataset.id, btn.dataset.parentPath); };
+            });
+            UI.itemsTableContainer.querySelectorAll('.delete-item-btn').forEach(btn => {
+                btn.onclick = (e) => { e.stopPropagation(); deleteItem(State.editingParentCollection, btn.dataset.id, btn.dataset.parentPath); };
+            });
+             UI.itemsTableContainer.querySelectorAll('.data-table tbody tr').forEach(row => {
+                row.onclick = () => { 
+                    const btn = row.querySelector('.edit-item-btn');
+                    if(btn) openModal(State.editingParentCollection, btn.dataset.id, btn.dataset.parentPath); 
+                };
+             });
+        }
+
+        function setupGlobalListeners() {
+            UI.loginForm.addEventListener('submit', handleLogin);
+            UI.logoutBtn.onclick = handleLogout;
+            UI.modalCancelBtn.onclick = closeModal;
+            UI.dataForm.onsubmit = handleSubmit;
+            
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.onclick = (e) => {
+                    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                    e.currentTarget.classList.add('active');
+                    State.currentCollection = e.currentTarget.dataset.collection;
+                    State.currentSectionId = null; 
+                    State.editingParentCollection = State.currentCollection;
+                    const icon = e.currentTarget.querySelector('i').className;
+                    UI.currentTitle.innerHTML = `<i class="${icon} text-[var(--primary-color)] mr-2"></i> ${e.currentTarget.textContent}`;
+                    UI.addBtn.classList.remove('hidden'); 
+                    fetchData(State.currentCollection);
+                };
+            });
+            
+            UI.addBtn.onclick = () => {
+                if(State.currentCollection) openModal(State.currentCollection);
+            };
+            UI.itemAddBtn.onclick = () => {
+                if(State.currentSectionId && State.editingParentCollection) {
+                    const parentCollectionType = State.editingParentCollection;
+                    openModal(parentCollectionType, null, `${parentCollectionType}/${State.currentSectionId}/items`);
+                } else {
+                     alert("Error: Missing section context. Please select a section first.");
+                }
+            };
+        }
+        
+        function loadInitialView() {
+             if (isAuthenticated()) {
+                UI.loginScreen.classList.add('hidden');
+                UI.dashboard.classList.remove('hidden');
+                // Auto-click the first tab to load initial data
+                const firstTab = document.querySelector('.tab-btn[data-collection="banners"]');
+                if (firstTab) firstTab.click(); 
+             } else {
+                UI.loginScreen.classList.remove('hidden');
+                UI.dashboard.classList.add('hidden');
+             }
+        }
+
+
+        // --- Initialization ---
+        document.addEventListener('DOMContentLoaded', () => {
+            setupGlobalListeners();
+            loadInitialView();
+        });
+
+    </script>
 </body>
 </html>
