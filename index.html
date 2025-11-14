@@ -7,21 +7,16 @@
     <link rel="shortcut icon" href="icon_cpanel.png" type="image/x-icon">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet" />
-    <!-- High-Level Modern Font: Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Deeper Dark Theme */
-            --primary-color: #ff4f00; /* Ti Sports Orange */
-            --bg-dark: #070911; /* Very Deep Navy/Black */
-            --card-bg: #111827; /* Dark Slate 900 */
-            --accent-light: #1f2937; /* Input/Subtle Accent */
+            --primary-color: #ff4f00;
+            --bg-dark: #070911;
+            --card-bg: #111827;
+            --accent-light: #1f2937;
             --text-color: #e5e7eb;
-html {
-    /* স্ক্রলবারটিকে সব সময় দৃশ্যমান রাখে, যাতে লেআউট না নড়ে */
-    overflow-y: scroll; 
-}
         }
+        html { overflow-y: scroll; }
         body {
             font-family: 'Inter', sans-serif;
             background-color: var(--bg-dark);
@@ -35,7 +30,7 @@ html {
             border-radius: 8px;
             font-weight: 600;
             transition: background-color 0.2s, transform 0.1s, box-shadow 0.3s;
-            box-shadow: 0 5px 15px rgba(255, 79, 0, 0.4); /* Brighter Shadow */
+            box-shadow: 0 5px 15px rgba(255, 79, 0, 0.4);
             border: 1px solid transparent;
         }
         .admin-btn:hover { 
@@ -43,7 +38,6 @@ html {
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(255, 79, 0, 0.6);
         }
-        /* Custom Tab Styling */
         .tab-btn {
             padding: 12px 20px;
             transition: color 0.2s, background-color 0.2s;
@@ -61,12 +55,10 @@ html {
             font-weight: 700;
             background-color: #111827;
         }
-        .modal-overlay { 
-            background-color: rgba(0, 0, 0, 0.9); /* Darker overlay */
-        }
+        .modal-overlay { background-color: rgba(0, 0, 0, 0.9); }
         .input-style {
             background-color: var(--accent-light);
-            border: 1px solid #374151; /* Slate 700 */
+            border: 1px solid #374151;
             color: var(--text-color);
             transition: border-color 0.2s, box-shadow 0.2s;
         }
@@ -85,19 +77,15 @@ html {
         .data-table th {
             text-transform: uppercase;
             font-size: 0.7rem;
-            color: #9ca3af; /* Gray 400 */
+            color: #9ca3af;
             letter-spacing: 0.08em;
-            background-color: #1f2937; /* Darker header for contrast */
+            background-color: #1f2937;
         }
-        .data-table tr:nth-child(even) {
-            background-color: rgba(255, 255, 255, 0.03); /* Subtle Zebra Stripe */
-        }
+        .data-table tr:nth-child(even) { background-color: rgba(255, 255, 255, 0.03); }
         .data-table tr:hover {
             background-color: #2a3447 !important; 
             cursor: pointer;
         }
-        
-        /* Custom Scrollbar for dark theme */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-thumb { background: var(--primary-color); border-radius: 10px; }
         ::-webkit-scrollbar-track { background: var(--card-bg); }
@@ -110,11 +98,9 @@ html {
         <div class="card w-full max-w-md p-6 sm:p-10 text-center mx-4 border-t-4 border-[var(--primary-color)]">
             <div class="text-5xl font-extrabold text-[var(--primary-color)] mb-2 tracking-wide">Ti Sports</div>
             <h2 class="text-2xl font-light mb-8 text-gray-300">Secure Admin Console</h2>
-            
             <div id="login-error" class="bg-red-700/50 text-white p-3 rounded-lg mb-6 text-sm flex items-center justify-center border border-red-600 hidden">
                 <i class="fas fa-exclamation-triangle mr-2"></i> Invalid credentials.
             </div>
-            
             <form id="login-form" class="space-y-5">
                 <div class="relative">
                     <i class="fas fa-user absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
@@ -136,13 +122,11 @@ html {
         <header class="bg-gray-900 shadow-2xl sticky top-0 z-20 border-b border-gray-700">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
                 <h1 class="text-3xl font-bold text-white tracking-wider flex items-center">
-                    <span class="text-[var(--primary-color)] font-extrabold text-4xl mr-1">c</span>Panel                </h1>
+                    <span class="text-[var(--primary-color)] font-extrabold text-4xl mr-1">c</span>Panel</h1>
                 <button id="logout-btn" class="text-sm text-gray-400 hover:text-red-400 transition-colors p-2 rounded-lg bg-gray-800 hover:bg-red-900/30">
                     <i class="fas fa-sign-out-alt mr-1"></i> Logout
                 </button>
             </div>
-            
-            <!-- Horizontal Navigation Tabs (Enhanced App Look) -->
             <nav class="flex overflow-x-auto max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-gray-800 whitespace-nowrap bg-gray-900/80 backdrop-blur-sm">
                 <button class="tab-btn text-gray-400 active" data-collection="banners"><i class="fas fa-image mr-2"></i> Banner</button>
                 <button class="tab-btn text-gray-400" data-collection="liveTV"><i class="fas fa-tv mr-2"></i> TV</button>
@@ -152,7 +136,6 @@ html {
         </header>
 
         <main class="flex-grow max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-            <!-- Header and Action Button -->
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 pb-4 border-b border-gray-800">
                 <h2 id="current-title" class="text-3xl font-extrabold text-white mb-3 sm:mb-0">
                     <i class="fas fa-tachometer-alt text-[var(--primary-color)] mr-2"></i> Dashboard Overview
@@ -161,15 +144,11 @@ html {
                     <i class="fas fa-plus mr-2"></i> Add New Item/Section
                 </button>
             </div>
-            
-            <!-- Main Content Area - Primary List/Sections -->
             <div id="content-area" class="card p-0 overflow-hidden min-h-[300px]">
                 <p class="text-gray-500 text-center py-20 text-lg">
                     <i class="fas fa-mouse-pointer mr-2 text-[var(--primary-color)]"></i> Select a category from the tabs above to begin managing content.
                 </p>
             </div>
-            
-            <!-- Items Management Area (Nested) - Visually distinct -->
             <div id="section-items-area" class="mt-8 card hidden border-l-4 border-sky-500">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 pb-4">
                     <h3 id="items-title" class="text-xl font-bold text-sky-400">Section Items</h3>
@@ -177,9 +156,7 @@ html {
                         <i class="fas fa-plus-circle mr-2"></i> Add New Item
                     </button>
                 </div>
-                <div id="items-table-container" class="overflow-x-auto">
-                    <!-- Items table will load here -->
-                </div>
+                <div id="items-table-container" class="overflow-x-auto"></div>
             </div>
         </main>
     </div>
@@ -202,23 +179,17 @@ html {
         </div>
     </div>
     
-    <!-- Firebase SDK and JavaScript Logic -->
     <script type="module">
-        // Ensure you replace this with your actual Firebase config
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
         import { getFirestore, collection, getDocs, query, orderBy, doc, setDoc, deleteDoc, addDoc, updateDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
         
-        // --- Firebase Configuration ---
         const firebaseConfig = { apiKey: "AIzaSyAb8YsPMOY53GxiycCL6G0MPZdgWe3nnyY", authDomain: "movie-92659.firebaseapp.com", projectId: "movie-92659", storageBucket: "movie-92659.appspot.com", messagingSenderId: "1090734362509", appId: "1:1090734362509:web:86be5583f6e8fcfdfa77c4" };
-        
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // --- Credentials ---
         const ADMIN_USER = 't';
         const ADMIN_PASS = 't'; 
 
-        // --- UI Elements ---
         const UI = {
             loginScreen: document.getElementById('login-screen'),
             loginForm: document.getElementById('login-form'), 
@@ -233,8 +204,6 @@ html {
             currentTitle: document.getElementById('current-title'),
             itemsTitle: document.getElementById('items-title'),
             itemsTableContainer: document.getElementById('items-table-container'),
-            
-            // Modal
             modal: document.getElementById('data-modal'),
             modalContentWrapper: document.getElementById('modal-content-wrapper'),
             modalTitle: document.getElementById('modal-title'),
@@ -243,15 +212,14 @@ html {
             modalCancelBtn: document.getElementById('modal-cancel-btn'),
         };
 
-        // --- State Management ---
         const State = {
             currentCollection: null, 
             currentSectionId: null, 
             editingId: null,
             editingParentCollection: null, 
         };
-
-        // --- Data Schemas ---
+        
+        // <<< পরিবর্তন শুরু: SCHEMAS অবজেক্ট আপডেট করা হয়েছে >>>
         const SCHEMAS = {
             banners: [
                 { name: 'title', label: 'Title', type: 'text', required: true },
@@ -272,7 +240,11 @@ html {
             items: (type) => [ 
                 { name: 'title', label: 'Title', type: 'text', required: true },
                 { name: 'posterUrl', label: `Poster URL (${type === 'cricket' ? '16:9 Thumbnail' : '2:3 Poster'})`, type: 'url', required: true },
-                { name: 'videoUrl', label: 'Video URL (M3U8/MP4/iFrame)', type: 'url', required: true },
+                { name: 'videoUrl', label: 'Video URL (M3U8/MPD/MP4/iFrame)', type: 'url', required: true },
+                // --- নতুন DRM ফিল্ড যোগ করা হয়েছে ---
+                { name: 'keyId', label: 'DRM Key ID (for .mpd streams)', type: 'text', required: false },
+                { name: 'contentKey', label: 'DRM Content Key (for .mpd streams)', type: 'text', required: false },
+                // ------------------------------------
                 { name: 'description', label: 'Description', type: 'textarea', required: false },
                 { name: 'order', label: 'Order', type: 'number', required: true, default: 0 },
                 ...(type === 'cricket' ? [
@@ -280,8 +252,8 @@ html {
                 ] : [])
             ]
         };
+        // <<< পরিবর্তন শেষ >>>
         
-        // Helper function to fetch single item data for modal loading
         async function loadItemForEditing(collectionName, itemId, parentPath, schema) {
             try {
                 const finalPath = parentPath ? `${parentPath}/${itemId}` : `${collectionName}/${itemId}`;
@@ -293,7 +265,6 @@ html {
                     schema.forEach(field => {
                         const input = document.getElementById(field.name);
                         if (!input) return;
-
                         if (field.type === 'boolean') {
                             input.checked = !!data[field.name];
                         } else if (data[field.name] !== undefined) {
@@ -309,8 +280,6 @@ html {
             }
         }
 
-        // --- Authentication Functions ---
-        
         function handleLogin(e) {
             e.preventDefault(); 
             const user = document.getElementById('admin-user').value;
@@ -319,7 +288,7 @@ html {
             UI.loginBtn.disabled = true;
             UI.loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Logging In...';
 
-            setTimeout(() => { // Simulate network delay
+            setTimeout(() => {
                 if (user === ADMIN_USER && pass === ADMIN_PASS) {
                     localStorage.setItem('adminLoggedIn', 'true');
                     UI.loginError.classList.add('hidden');
@@ -341,8 +310,6 @@ html {
         function isAuthenticated() {
             return localStorage.getItem('adminLoggedIn') === 'true';
         }
-
-        // --- Utility and CRUD functions (unchanged logic) ---
 
         function showLoading(element) {
             element.innerHTML = '<div class="text-center py-16 text-gray-500"><i class="fas fa-spinner fa-spin fa-3x text-[var(--primary-color)]"></i><p class="mt-4 text-lg">Loading data, please wait...</p></div>';
@@ -392,8 +359,6 @@ html {
             try {
                 await deleteDoc(doc(db, finalPath));
                 alert("Content deleted successfully!");
-                
-                // Refresh Logic
                 if (parentPath) {
                     const sectionId = State.currentSectionId;
                     const sectionDoc = await getDoc(doc(db, State.editingParentCollection, sectionId));
@@ -408,11 +373,8 @@ html {
             }
         }
 
-        // --- Rendering Functions ---
-
         function renderCollectionTable(collectionName, data) {
             UI.contentArea.innerHTML = '';
-            
             const isSectionCollection = collectionName.endsWith('Sections');
             const schema = isSectionCollection ? SCHEMAS.sections : SCHEMAS[collectionName];
             
@@ -422,12 +384,8 @@ html {
             }
 
             const headersToShow = schema.filter(s => ['title', 'name', 'posterUrl', 'logoUrl', 'order'].includes(s.name));
-
             let tableHeaders = headersToShow.map(s => `<th class="p-4 text-left font-semibold">${s.label}</th>`).join('');
-            
-            if (isSectionCollection) {
-                tableHeaders += `<th class="p-4 text-center font-semibold">Content</th>`;
-            }
+            if (isSectionCollection) tableHeaders += `<th class="p-4 text-center font-semibold">Content</th>`;
             tableHeaders += `<th class="p-4 text-right font-semibold">Actions</th>`;
 
             let tableHTML = `<div class="overflow-x-auto"><table class="min-w-full divide-y divide-gray-800 data-table rounded-xl"><thead><tr class="bg-gray-800">${tableHeaders}</tr></thead><tbody class="divide-y divide-gray-800">`;
@@ -436,7 +394,6 @@ html {
                 let rowData = headersToShow.map(s => {
                     let value = item[s.name];
                     let cellContent = '<span class="text-gray-500 text-sm">N/A</span>';
-                    
                     if (s.name === 'logoUrl' || s.name === 'posterUrl') {
                         const aspect = s.name === 'logoUrl' ? 'aspect-square' : 'aspect-video';
                         cellContent = `<img src="${value}" alt="Thumb" class="h-10 w-16 object-cover rounded-md ${aspect} shadow-lg" onerror="this.src='https://via.placeholder.com/60x40.png?text=Ti'">`;
@@ -458,8 +415,7 @@ html {
                 }
 
                 tableHTML += `<tr data-id="${item.id}" class="transition-colors duration-150">
-                    ${rowData}
-                    ${sectionBtn}
+                    ${rowData}${sectionBtn}
                     <td class="p-4 text-right space-x-2 whitespace-nowrap">
                         <button class="text-yellow-500 hover:text-yellow-400 edit-btn p-2 rounded-full bg-gray-700/50 hover:bg-gray-700 transition" data-id="${item.id}" data-collection="${collectionName}" title="Edit"><i class="fas fa-edit"></i></button>
                         <button class="text-red-500 hover:text-red-400 delete-btn p-2 rounded-full bg-gray-700/50 hover:bg-gray-700 transition" data-id="${item.id}" data-collection="${collectionName}" title="Delete"><i class="fas fa-trash"></i></button>
@@ -474,15 +430,12 @@ html {
 
         function renderItemsTable(data, parentPath) {
             const collectionType = State.editingParentCollection;
-            
             if (data.length === 0) {
                  UI.itemsTableContainer.innerHTML = '<p class="text-center py-20 text-gray-500 text-lg"><i class="fas fa-info-circle mr-2"></i> No items in this section. Click "Add New Item" above.</p>';
                  return;
             }
-            
             const schema = SCHEMAS.items(collectionType === 'cricketSections' ? 'cricket' : 'movies');
             const headersToShow = schema.filter(s => ['title', 'posterUrl', 'isLive', 'order'].includes(s.name));
-
             let tableHeaders = headersToShow.map(s => `<th class="p-4 text-left font-semibold">${s.label}</th>`).join('');
             tableHeaders += `<th class="p-4 text-right font-semibold">Actions</th>`;
 
@@ -492,7 +445,6 @@ html {
                 let rowData = headersToShow.map(s => {
                     let value = item[s.name];
                     let cellContent = '<span class="text-gray-500 text-sm">N/A</span>';
-                    
                     if (s.name === 'posterUrl') {
                         const aspect = collectionType === 'cricketSections' ? 'aspect-video' : 'aspect-[2/3]';
                         cellContent = `<img src="${value}" alt="Thumb" class="h-12 w-auto object-cover rounded-md ${aspect} shadow-md" onerror="this.src='https://via.placeholder.com/60x90.png?text=Ti'">`;
@@ -518,8 +470,7 @@ html {
             setupItemTableEventHandlers();
         }
 
-        // --- Modal & Form Logic ---
-
+        // <<< পরিবর্তন শুরু: openModal ফাংশনে ডাইনামিক ফিল্ড লজিক যোগ করা হয়েছে >>>
         function openModal(collectionName, itemId = null, parentPath = null) {
             State.editingId = itemId;
             State.editingParentCollection = collectionName;
@@ -536,11 +487,9 @@ html {
                 UI.modalTitle.innerHTML = itemId ? `<i class="fas fa-edit mr-2 text-[var(--primary-color)]"></i> Edit ${collectionName}` : `<i class="fas fa-plus-square mr-2 text-[var(--primary-color)]"></i> Add New ${collectionName.replace('Sections', ' Section')}`;
             }
 
-            // Generate Form Fields
             UI.modalFieldsContainer.innerHTML = schema.map(field => {
                 const required = field.required ? 'required' : '';
                 const baseClass = 'input-style w-full p-3 rounded-lg focus:ring-1';
-                
                 let inputHtml;
                 if (field.type === 'textarea') {
                     inputHtml = `<textarea id="${field.name}" name="${field.name}" class="${baseClass}" rows="4" ${required} placeholder="Enter ${field.label}..."></textarea>`;
@@ -549,22 +498,33 @@ html {
                         <input type="checkbox" id="${field.name}" name="${field.name}" class="h-5 w-5 rounded border-gray-600 checked:bg-[var(--primary-color)] focus:ring-[var(--primary-color)] text-[var(--primary-color)]">
                         <label for="${field.name}" class="text-gray-200 font-medium cursor-pointer">${field.label}</label>
                     </div>`;
-                } else if (field.type === 'number') {
-                     inputHtml = `<input type="number" id="${field.name}" name="${field.name}" class="${baseClass}" ${required} value="${field.default || ''}" placeholder="E.g., 10">`;
+                } else {
+                    inputHtml = `<input type="${field.type || 'text'}" id="${field.name}" name="${field.name}" class="${baseClass}" ${required} value="${field.default || ''}" placeholder="Enter ${field.label}">`;
                 }
-                else {
-                    inputHtml = `<input type="${field.type}" id="${field.name}" name="${field.name}" class="${baseClass}" ${required} value="${field.default || ''}" placeholder="Enter ${field.label}">`;
-                }
-                
                 return `<div><label for="${field.name}" class="block text-sm font-semibold mb-2 text-gray-300">${field.label}${field.required ? ' <span class="text-red-500">*</span>' : ''}</label>${inputHtml}</div>`;
             }).join('');
 
-            // Load Existing Data
             if (itemId) {
                  loadItemForEditing(collectionName, itemId, parentPath, schema);
             }
             
-            // Show modal with transition effects
+            // --- ডাইনামিক DRM ফিল্ড দেখানোর লজিক ---
+            if (isItemEdit) {
+                const videoUrlInput = document.getElementById('videoUrl');
+                const keyIdField = document.getElementById('keyId')?.parentElement; // div-টি সিলেক্ট করা হচ্ছে
+                const contentKeyField = document.getElementById('contentKey')?.parentElement;
+
+                const toggleDrmFields = () => {
+                    const show = videoUrlInput.value.toLowerCase().includes('.mpd');
+                    if(keyIdField) keyIdField.style.display = show ? 'block' : 'none';
+                    if(contentKeyField) contentKeyField.style.display = show ? 'block' : 'none';
+                };
+
+                videoUrlInput.addEventListener('input', toggleDrmFields);
+                toggleDrmFields(); // প্রথমবার মডাল লোডের সময় চেক করার জন্য
+            }
+            // ------------------------------------
+            
             UI.modal.classList.remove('hidden');
             setTimeout(() => {
                 UI.modal.style.opacity = '1';
@@ -572,6 +532,8 @@ html {
                 UI.modalContentWrapper.classList.add('scale-100', 'opacity-100');
             }, 10);
         }
+        // <<< পরিবর্তন শেষ >>>
+
 
         function closeModal() {
             UI.modalContentWrapper.classList.add('scale-95', 'opacity-0');
@@ -585,12 +547,10 @@ html {
 
         async function handleSubmit(e) {
             e.preventDefault();
-            
             const collectionName = State.editingParentCollection || State.currentCollection;
             const itemId = State.editingId;
 
-            let schema;
-            let finalCollectionPath;
+            let schema, finalCollectionPath;
             let isItemOperation = !!State.currentSectionId;
             let isUpdate = !!itemId;
 
@@ -608,6 +568,9 @@ html {
                 const input = document.getElementById(field.name);
                 if (!input) return;
                 
+                // শুধুমাত্র দৃশ্যমান ফিল্ড থেকে ডেটা নেওয়া হচ্ছে
+                if(input.parentElement.style.display === 'none') return;
+                
                 if (field.type === 'number') {
                     formData[field.name] = isNaN(parseInt(input.value)) ? 0 : parseInt(input.value);
                 } else if (field.type === 'boolean') {
@@ -621,15 +584,11 @@ html {
                 if (isUpdate) {
                     await updateDoc(doc(db, finalCollectionPath, itemId), formData);
                 } else {
-                    if (isItemOperation) {
-                        formData.createdAt = serverTimestamp();
-                    }
+                    if (isItemOperation) formData.createdAt = serverTimestamp();
                     await addDoc(collection(db, finalCollectionPath), formData);
                 }
                 
                 closeModal();
-                
-                // Refresh data based on context
                 if (isItemOperation) {
                     const sectionId = State.currentSectionId;
                     const sectionDoc = await getDoc(doc(db, collectionName, sectionId));
@@ -645,8 +604,6 @@ html {
                 alert("Error saving data: " + error.message);
             }
         }
-
-        // --- Event Listener Setup ---
         
         function setupTableEventHandlers(collectionName) {
             UI.contentArea.querySelectorAll('.edit-btn').forEach(btn => {
@@ -655,7 +612,6 @@ html {
             UI.contentArea.querySelectorAll('.delete-btn').forEach(btn => {
                 btn.onclick = (e) => { e.stopPropagation(); deleteItem(collectionName, btn.dataset.id); };
             });
-
             UI.contentArea.querySelectorAll('.manage-items-btn').forEach(btn => {
                 btn.onclick = (e) => {
                     e.stopPropagation();
@@ -663,7 +619,6 @@ html {
                     fetchSectionItems(btn.dataset.type, btn.dataset.id, btn.dataset.title);
                 };
             });
-             // Add click to edit functionality on rows if not a section management row
              if (!collectionName.endsWith('Sections')) {
                 UI.contentArea.querySelectorAll('.data-table tbody tr').forEach(row => {
                     row.onclick = () => { openModal(collectionName, row.dataset.id); };
@@ -723,7 +678,6 @@ html {
              if (isAuthenticated()) {
                 UI.loginScreen.classList.add('hidden');
                 UI.dashboard.classList.remove('hidden');
-                // Auto-click the first tab to load initial data
                 const firstTab = document.querySelector('.tab-btn[data-collection="banners"]');
                 if (firstTab) firstTab.click(); 
              } else {
@@ -732,13 +686,10 @@ html {
              }
         }
 
-
-        // --- Initialization ---
         document.addEventListener('DOMContentLoaded', () => {
             setupGlobalListeners();
             loadInitialView();
         });
-
     </script>
 </body>
 </html>
