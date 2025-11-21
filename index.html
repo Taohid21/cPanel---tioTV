@@ -2,44 +2,50 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport" />
-    <title>cPanel - tioTV</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>cPanel v2.0 - tioTV</title>
     <link rel="shortcut icon" href="https://www.google.com/s2/favicons?domain=firebase.google.com&sz=128" type="image/x-icon">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
     <style>
-        :root { --primary-color: #ff4f00; --bg-dark: #070911; --card-bg: #111827; --accent-light: #1f2937; --text-color: #e5e7eb; }
+        :root { --primary-color: #ff4f00; --primary-hover: #e04500; --bg-dark: #0d1117; --bg-medium: #161b22; --bg-light: #21262d; --border-color: #30363d; --text-main: #c9d1d9; --text-secondary: #8b949e; }
         html { overflow-y: scroll; scroll-behavior: smooth; }
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg-dark); color: var(--text-color); transition: all 0.3s ease; }
-        .admin-btn { background-color: var(--primary-color); color: white; padding: 10px 20px; border-radius: 8px; font-weight: 600; transition: background-color 0.2s, transform 0.1s, box-shadow 0.3s; box-shadow: 0 5px 15px rgba(255, 79, 0, 0.4); border: 1px solid transparent; }
-        .admin-btn:hover { background-color: #e04500; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(255, 79, 0, 0.6); }
-        .admin-btn:disabled { background-color: #4b5563; box-shadow: none; cursor: not-allowed; transform: none; }
-        .tab-btn { padding: 12px 20px; transition: color 0.2s, background-color 0.2s; border-radius: 6px 6px 0 0; flex-shrink: 0; border-bottom: 3px solid transparent; }
-        .tab-btn:hover { color: white; background-color: #1f2937; }
-        .tab-btn.active { border-bottom: 3px solid var(--primary-color); color: var(--primary-color); font-weight: 700; background-color: #111827; }
-        .modal-overlay { background-color: rgba(0, 0, 0, 0.9); backdrop-filter: blur(5px); }
-        .input-style, .select-style { background-color: var(--accent-light); border: 1px solid #374151; color: var(--text-color); transition: border-color 0.2s, box-shadow 0.2s; }
-        .input-style:focus, .select-style:focus { border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(255, 79, 0, 0.5); background-color: #0f172a; outline: none; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-dark); color: var(--text-main); transition: all 0.3s ease; }
+        .admin-btn { background-image: linear-gradient(to right, var(--primary-color) 0%, #ff7e4d 100%); color: white; padding: 12px 24px; border-radius: 8px; font-weight: 600; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(255, 79, 0, 0.3); border: none; background-size: 200% auto; }
+        .admin-btn:hover { background-position: right center; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(255, 79, 0, 0.5); }
+        .admin-btn:disabled { background-image: none; background-color: #4b5563; box-shadow: none; cursor: not-allowed; transform: none; }
+        .tab-btn { padding: 10px 18px; transition: color 0.2s, background-color 0.2s; border-radius: 8px; flex-shrink: 0; font-weight: 500; }
+        .tab-btn:hover { color: white; background-color: var(--bg-light); }
+        .tab-btn.active { color: white; font-weight: 700; background-color: var(--primary-color); }
+        .modal-overlay { background-color: rgba(13, 17, 23, 0.8); backdrop-filter: blur(8px); }
+        .input-style, .select-style { background-color: var(--bg-light); border: 1px solid var(--border-color); color: var(--text-main); transition: border-color 0.2s, box-shadow 0.2s; }
+        .input-style:focus, .select-style:focus { border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(255, 79, 0, 0.4); background-color: var(--bg-dark); outline: none; }
         .input-style.is-invalid { border-color: #ef4444; }
-        .card { background-color: var(--card-bg); border: 1px solid #1f2937; border-radius: 12px; padding: 1.5rem; box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.3), 0 5px 15px -5px rgba(0, 0, 0, 0.2); }
-        .data-table th { text-transform: uppercase; font-size: 0.7rem; color: #9ca3af; letter-spacing: 0.08em; background-color: #1f2937; }
-        .data-table tr:nth-child(even) { background-color: rgba(255, 255, 255, 0.03); }
-        .data-table tr:hover { background-color: #2a3447 !important; cursor: pointer; }
-        .toast { transition: all 0.5s ease-in-out; }
+        .card { background-color: var(--bg-medium); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.4); }
+        .data-table th { font-size: 0.75rem; color: var(--text-secondary); letter-spacing: 0.05em; background-color: var(--bg-light); text-transform: uppercase; }
+        .data-table tr { border-bottom: 1px solid var(--border-color); }
+        .data-table tr:last-child { border-bottom: none; }
+        .data-table tr:hover { background-color: var(--bg-light) !important; }
+        .data-table .drag-handle { cursor: grab; opacity: 0.5; }
+        .sortable-ghost { opacity: 0.4; background: var(--bg-light); }
+        .badge { display: inline-block; padding: 3px 10px; font-size: 0.7rem; font-weight: 600; border-radius: 99px; text-transform: uppercase; }
+        .badge.live { background-color: #ef4444; color: white; box-shadow: 0 0 10px #ef4444; }
+        .badge.upcoming { background-color: #3b82f6; color: white; }
+        .badge.finished { background-color: #6b7280; color: white; }
+        .toast { transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55); }
         .image-preview-container { position: relative; }
-        .image-preview { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); height: 32px; width: 50px; object-fit: cover; border-radius: 4px; border: 1px solid #4b5563; background-color: #070911; box-shadow: 0 2px 5px rgba(0,0,0,0.5); display: none; }
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-thumb { background: var(--primary-color); border-radius: 10px; }
-        ::-webkit-scrollbar-track { background: var(--card-bg); }
+        .image-preview { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); height: 32px; width: 50px; object-fit: cover; border-radius: 4px; border: 1px solid var(--border-color); background-color: var(--bg-dark); box-shadow: 0 2px 5px rgba(0,0,0,0.5); display: none; }
+        ::-webkit-scrollbar { width: 8px; } ::-webkit-scrollbar-thumb { background: var(--primary-color); border-radius: 10px; } ::-webkit-scrollbar-track { background: var(--bg-medium); }
     </style>
 </head>
 <body>
-    <div id="login-screen" class="min-h-screen flex items-center justify-center">
+    <div id="login-screen" class="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0a0c10] to-[#111827]">
         <div class="card w-full max-w-md p-6 sm:p-10 text-center mx-4 border-t-4 border-[var(--primary-color)]">
             <div class="text-5xl font-extrabold text-[var(--primary-color)] mb-2 tracking-wide">tioTV</div>
-            <h2 class="text-2xl font-light mb-8 text-gray-300">Secure Admin Console</h2>
-            <div id="login-error" class="bg-red-700/50 text-white p-3 rounded-lg mb-6 text-sm flex items-center justify-center border border-red-600 hidden"></div>
+            <h2 class="text-2xl font-light mb-8 text-gray-300">Secure Admin Console v2.0</h2>
+            <div id="login-error" class="bg-red-900 text-white p-3 rounded-lg mb-6 text-sm flex items-center justify-center border border-red-700 hidden"></div>
             <form id="login-form" class="space-y-5">
                 <div class="relative"><i class="fas fa-user absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i><input type="text" id="admin-user" placeholder="Username" class="input-style w-full p-3 pl-12 rounded-lg"></div>
                 <div class="relative"><i class="fas fa-lock absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i><input type="password" id="admin-pass" placeholder="Password" class="input-style w-full p-3 pl-12 rounded-lg"></div>
@@ -49,31 +55,37 @@
     </div>
 
     <div id="dashboard" class="hidden min-h-screen flex flex-col">
-        <header class="bg-gray-900 shadow-2xl sticky top-0 z-20 border-b border-gray-700">
+        <header class="bg-black/30 backdrop-blur-lg shadow-2xl sticky top-0 z-20 border-b border-[var(--border-color)]">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-                <h1 class="text-3xl font-bold text-white tracking-wider flex items-center"><span class="text-[var(--primary-color)] font-extrabold text-4xl mr-1">c</span>Panel</h1>
+                <h1 class="text-3xl font-bold text-white tracking-wider flex items-center"><span class="text-[var(--primary-color)] font-black text-4xl mr-1">c</span>Panel</h1>
                 <button id="logout-btn" class="text-sm text-gray-400 hover:text-red-400 transition-colors p-2 rounded-lg bg-gray-800 hover:bg-red-900/30"><i class="fas fa-sign-out-alt mr-1"></i> Logout</button>
             </div>
-            <nav class="flex overflow-x-auto max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-gray-800 whitespace-nowrap bg-gray-900/80 backdrop-blur-sm">
-                <button class="tab-btn text-gray-400" data-tab="dashboard"><i class="fas fa-tachometer-alt mr-2"></i> Dashboard</button>
-                <button class="tab-btn text-gray-400" data-tab="banners"><i class="fas fa-image mr-2"></i> Banner</button>
-                <button class="tab-btn text-gray-400" data-tab="tv_categories"><i class="fas fa-tags mr-2"></i> TV Categories</button>
-                <button class="tab-btn text-gray-400" data-tab="liveTV"><i class="fas fa-tv mr-2"></i> TV</button>
-                <button class="tab-btn text-gray-400" data-tab="moviesSections"><i class="fas fa-film mr-2"></i> Movies</button>
-                <button class="tab-btn text-gray-400" data-tab="cricketSections"><i class="fas fa-baseball-bat-ball mr-2"></i> Cricket</button>
+            <nav class="flex overflow-x-auto max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-3 gap-2">
+                <button class="tab-btn" data-tab="dashboard"><i class="fas fa-tachometer-alt mr-2"></i> Dashboard</button>
+                <button class="tab-btn" data-tab="banners"><i class="fas fa-image mr-2"></i> Banners</button>
+                <button class="tab-btn" data-tab="tv_categories"><i class="fas fa-tags mr-2"></i> TV Categories</button>
+                <button class="tab-btn" data-tab="liveTV"><i class="fas fa-tv mr-2"></i> TV</button>
+                <button class="tab-btn" data-tab="moviesSections"><i class="fas fa-film mr-2"></i> Movies</button>
+                <button class="tab-btn" data-tab="cricketSections"><i class="fas fa-baseball-bat-ball mr-2"></i> Cricket</button>
             </nav>
         </header>
 
         <main class="flex-grow max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 w-full">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 pb-4 border-b border-gray-800">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 pb-4 border-b border-[var(--border-color)]">
                 <h2 id="current-title" class="text-3xl font-extrabold text-white mb-3 sm:mb-0"></h2>
-                <button id="add-new-btn" class="admin-btn hidden text-sm"><i class="fas fa-plus mr-2"></i> Add New</button>
+                <div class="flex items-center gap-3">
+                     <button id="save-order-btn" class="hidden admin-btn text-sm bg-green-600 hover:bg-green-700 shadow-green-500/30"><i class="fas fa-save mr-2"></i> Save Order</button>
+                    <button id="add-new-btn" class="admin-btn hidden text-sm"><i class="fas fa-plus mr-2"></i> Add New</button>
+                </div>
             </div>
             <div id="content-area" class="min-h-[300px]"></div>
             <div id="section-items-area" class="mt-8 card hidden border-l-4 border-sky-500">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 pb-4">
                     <h3 id="items-title" class="text-xl font-bold text-sky-400">Section Items</h3>
-                    <button id="add-item-btn" class="admin-btn text-sm mt-3 sm:mt-0 bg-sky-600 hover:bg-sky-700 shadow-none"><i class="fas fa-plus-circle mr-2"></i> Add New Item</button>
+                    <div class="flex items-center gap-3">
+                         <button id="save-item-order-btn" class="hidden admin-btn text-sm bg-green-600 hover:bg-green-700 shadow-green-500/30"><i class="fas fa-save mr-2"></i> Save Order</button>
+                        <button id="add-item-btn" class="admin-btn text-sm mt-3 sm:mt-0 bg-sky-600 hover:bg-sky-700 shadow-sky-500/30"><i class="fas fa-plus-circle mr-2"></i> Add Item</button>
+                    </div>
                 </div>
                 <div id="items-table-container" class="overflow-x-auto"></div>
             </div>
@@ -82,10 +94,10 @@
 
     <div id="data-modal" class="modal-overlay fixed inset-0 z-50 flex items-center justify-center p-4 transition-opacity duration-300 hidden">
         <div class="card w-full max-w-lg shadow-2xl transition-transform duration-300 transform scale-95 opacity-0 border-t-4 border-[var(--primary-color)]" id="modal-content-wrapper">
-            <h3 id="modal-title" class="text-2xl font-bold mb-5 text-white border-b border-gray-700 pb-3"></h3>
+            <h3 id="modal-title" class="text-2xl font-bold mb-5 text-white border-b border-[var(--border-color)] pb-3"></h3>
             <form id="data-form" class="space-y-4" novalidate>
                 <div id="modal-fields-container" class="max-h-[70vh] overflow-y-auto pr-2"></div>
-                <div class="flex justify-end space-x-3 pt-4 border-t border-gray-700 mt-6">
+                <div class="flex justify-end space-x-3 pt-4 border-t border-[var(--border-color)] mt-6">
                     <button type="button" id="modal-cancel-btn" class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition"><i class="fas fa-times-circle mr-1"></i> Cancel</button>
                     <button type="submit" id="modal-save-btn" class="admin-btn"><i class="fas fa-save mr-1"></i> Save Changes</button>
                 </div>
@@ -97,7 +109,7 @@
     
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-        import { getFirestore, collection, getDocs, query, orderBy, doc, deleteDoc, addDoc, updateDoc, getDoc, serverTimestamp, getCountFromServer, Timestamp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, query, orderBy, doc, deleteDoc, addDoc, updateDoc, getDoc, serverTimestamp, getCountFromServer, Timestamp, writeBatch, limit, where } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
         
         const firebaseConfig = { apiKey: "AIzaSyAb8YsPMOY53GxiycCL6G0MPZdgWe3nnyY", authDomain: "movie-92659.firebaseapp.com", projectId: "movie-92659", storageBucket: "movie-92659.appspot.com", messagingSenderId: "1090734362509", appId: "1:1090734362509:web:86be5583f6e8fcfdfa77c4" };
         const app = initializeApp(firebaseConfig);
@@ -107,14 +119,13 @@
         const ADMIN_PASS = 't'; 
 
         const UI = {
-            loginScreen: document.getElementById('login-screen'), loginForm: document.getElementById('login-form'), dashboard: document.getElementById('dashboard'), loginBtn: document.getElementById('login-btn'), logoutBtn: document.getElementById('logout-btn'), loginError: document.getElementById('login-error'), contentArea: document.getElementById('content-area'), sectionItemsArea: document.getElementById('section-items-area'), addBtn: document.getElementById('add-new-btn'), itemAddBtn: document.getElementById('add-item-btn'), currentTitle: document.getElementById('current-title'), itemsTitle: document.getElementById('items-title'), itemsTableContainer: document.getElementById('items-table-container'), modal: document.getElementById('data-modal'), modalContentWrapper: document.getElementById('modal-content-wrapper'), modalTitle: document.getElementById('modal-title'), modalFieldsContainer: document.getElementById('modal-fields-container'), dataForm: document.getElementById('data-form'), modalCancelBtn: document.getElementById('modal-cancel-btn'), modalSaveBtn: document.getElementById('modal-save-btn'), toast: document.getElementById('toast-notification'),
+            loginScreen: document.getElementById('login-screen'), loginForm: document.getElementById('login-form'), dashboard: document.getElementById('dashboard'), loginBtn: document.getElementById('login-btn'), logoutBtn: document.getElementById('logout-btn'), loginError: document.getElementById('login-error'), contentArea: document.getElementById('content-area'), sectionItemsArea: document.getElementById('section-items-area'), addBtn: document.getElementById('add-new-btn'), itemAddBtn: document.getElementById('add-item-btn'), saveOrderBtn: document.getElementById('save-order-btn'), saveItemOrderBtn: document.getElementById('save-item-order-btn'), currentTitle: document.getElementById('current-title'), itemsTitle: document.getElementById('items-title'), itemsTableContainer: document.getElementById('items-table-container'), modal: document.getElementById('data-modal'), modalContentWrapper: document.getElementById('modal-content-wrapper'), modalTitle: document.getElementById('modal-title'), modalFieldsContainer: document.getElementById('modal-fields-container'), dataForm: document.getElementById('data-form'), modalCancelBtn: document.getElementById('modal-cancel-btn'), modalSaveBtn: document.getElementById('modal-save-btn'), toast: document.getElementById('toast-notification'),
         };
 
         const State = {
-            currentTab: null, currentSectionId: null, editingId: null, editingParentCollection: null, categoryCache: null,
+            currentTab: null, currentSectionId: null, editingId: null, editingParentCollection: null, categoryCache: null, sortableInstance: null, itemSortableInstance: null
         };
         
-        // --- UPDATED SCHEMAS ---
         const SCHEMAS = {
             banners: [ { name: 'title', label: 'Title', type: 'text', required: true }, { name: 'posterUrl', label: 'Poster URL (16:9 Banner)', type: 'url', required: true }, { name: 'link', label: 'Content Link (e.g. moviesSections/id/items/id)', type: 'text', required: true }, { name: 'order', label: 'Order', type: 'number', required: true, default: 0 } ],
             tv_categories: [ { name: 'name', label: 'Category Name', type: 'text', required: true } ],
@@ -124,7 +135,6 @@
             ...(type === 'cricket' ? [ 
                 { name: 'startTime', label: 'Match Start Time', type: 'datetime-local', required: true }, 
                 { name: 'endTime', label: 'Match End Time', type: 'datetime-local', required: true } 
-                // isLive is now handled programmatically, not as a form field.
             ] : []) ]
         };
         
@@ -134,222 +144,286 @@
             setTimeout(() => { UI.toast.style.transform = 'translateX(120%)'; }, 3000);
         }
 
-        // --- BUG FIX: Function to correctly format date for datetime-local input ---
         function formatTimestampForInput(timestamp) {
             if (!(timestamp instanceof Timestamp)) return '';
             const date = timestamp.toDate();
-            // Helper to add leading zero
             const pad = (num) => num.toString().padStart(2, '0');
             return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
         }
 
-        async function loadItemForEditing(collectionName, itemId, parentPath, schema) {
-            try {
-                const finalPath = parentPath ? `${parentPath}/${itemId}` : `${collectionName}/${itemId}`;
-                const docRef = doc(db, finalPath);
-                const docSnap = await getDoc(docRef);
-
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    for (const field of schema) {
-                        const input = document.getElementById(field.name);
-                        if (!input) continue;
-                        if (data[field.name] !== undefined) {
-                            if (field.type === 'datetime-local') {
-                                input.value = formatTimestampForInput(data[field.name]);
-                            } else if (field.type === 'select') {
-                                await new Promise(resolve => setTimeout(resolve, 50)); // Wait for options to render
-                                input.value = data[field.name];
-                            } else {
-                                input.value = data[field.name];
-                            }
-                            if (field.type === 'url' || field.name === 'videoUrl') {
-                                input.dispatchEvent(new Event('input'));
-                            }
-                        }
-                    }
-                }
-            } catch (error) {
-                showToast(`Could not load item data. ${error.message}`, 'error');
-            }
-        }
-        
-        function handleLogin(e) {
-            e.preventDefault();
-            const user = document.getElementById('admin-user').value;
-            const pass = document.getElementById('admin-pass').value;
-            UI.loginBtn.disabled = true;
-            UI.loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Logging In...';
-            setTimeout(() => {
-                if (user === ADMIN_USER && pass === ADMIN_PASS) {
-                    localStorage.setItem('adminLoggedIn', 'true');
-                    UI.loginError.classList.add('hidden');
-                    loadInitialView();
-                } else {
-                    UI.loginError.textContent = 'Invalid credentials. Please try again.';
-                    UI.loginError.classList.remove('hidden');
-                }
-                UI.loginBtn.innerHTML = '<i class="fas fa-sign-in-alt mr-2"></i> Access Dashboard';
-                UI.loginBtn.disabled = false;
-            }, 500);
-        }
-
-        function handleLogout() { localStorage.removeItem('adminLoggedIn'); loadInitialView(); }
-        function isAuthenticated() { return localStorage.getItem('adminLoggedIn') === 'true'; }
-        
-        function showLoading(element) {
-            element.innerHTML = '<div class="text-center py-16 text-gray-500"><i class="fas fa-spinner fa-spin fa-3x text-[var(--primary-color)]"></i><p class="mt-4 text-lg">Loading data, please wait...</p></div>';
-        }
-
-        async function renderDashboard() {
-            UI.addBtn.classList.add('hidden');
-            const stats = [
-                { name: 'Banners', collection: 'banners', icon: 'fa-image', color: 'blue' }, { name: 'TV Categories', collection: 'tv_categories', icon: 'fa-tags', color: 'indigo' }, { name: 'TV Channels', collection: 'liveTV', icon: 'fa-tv', color: 'green' }, { name: 'Movie Sections', collection: 'moviesSections', icon: 'fa-film', color: 'purple' }, { name: 'Cricket Sections', collection: 'cricketSections', icon: 'fa-baseball-bat-ball', color: 'orange' },
-            ];
-            UI.contentArea.innerHTML = '<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>';
-            const grid = UI.contentArea.querySelector('.grid');
-            const countPromises = stats.map(s => getCountFromServer(collection(db, s.collection)));
-            const counts = await Promise.all(countPromises);
-            
-            stats.forEach((stat, index) => {
-                grid.innerHTML += `
-                    <div class="card border-l-4 border-${stat.color}-500 flex items-center justify-between">
-                        <div><p class="text-sm font-medium text-gray-400">${stat.name}</p><p class="text-4xl font-extrabold text-white">${counts[index].data().count}</p></div>
-                        <i class="fas ${stat.icon} text-5xl text-${stat.color}-500 opacity-20"></i>
-                    </div>`;
-            });
-        }
-
-        async function fetchData(tab) {
-            State.currentSectionId = null;
-            UI.contentArea.innerHTML = '';
-            UI.sectionItemsArea.classList.add('hidden');
-            if (tab === 'dashboard') {
-                renderDashboard();
-                return;
-            }
-            showLoading(UI.contentArea);
-            UI.addBtn.classList.remove('hidden');
-
-            try {
-                const q = tab.includes('Sections') || tab === 'liveTV' ? query(collection(db, tab), orderBy("order", "asc")) : collection(db, tab);
-                const snapshot = await getDocs(q);
-                const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                renderCollectionTable(tab, data);
-            } catch (error) {
-                showToast(`Error loading data: ${error.message}`, 'error');
-                UI.contentArea.innerHTML = `<p class="text-center py-20 text-red-400"><i class="fas fa-exclamation-circle mr-2"></i> Error loading data.</p>`;
-            }
-        }
-        
-        async function fetchSectionItems(collectionType, sectionId, sectionTitle) {
-            showLoading(UI.itemsTableContainer);
-            State.currentSectionId = sectionId;
-            State.editingParentCollection = collectionType;
-            UI.sectionItemsArea.classList.remove('hidden');
-            UI.itemsTitle.textContent = `Items in Section: "${sectionTitle}"`;
-
-            try {
-                const itemPath = `${collectionType}/${sectionId}/items`;
-                const q = query(collection(db, itemPath), orderBy("order", "asc"));
-                const snapshot = await getDocs(q);
-                const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data(), parentPath: itemPath }));
-                renderItemsTable(data, itemPath);
-            } catch (error) {
-                showToast(`Error loading items: ${error.message}`, 'error');
-            }
-        }
-
-        async function deleteItem(collectionName, id, parentPath = null) {
-            const finalPath = parentPath ? `${parentPath}/${id}` : `${collectionName}/${id}`;
-            const displayName = `Entry ${id.substring(0, 5)}...`;
-            if (!confirm(`CONFIRM DELETION: Are you sure you want to delete ${displayName}? This action is irreversible.`)) return;
-
-            try {
-                await deleteDoc(doc(db, finalPath));
-                showToast("Content deleted successfully!", 'success');
-                if (parentPath) {
-                    const sectionDoc = await getDoc(doc(db, State.editingParentCollection, State.currentSectionId));
-                    fetchSectionItems(State.editingParentCollection, State.currentSectionId, sectionDoc.data().title);
-                } else {
-                    fetchData(collectionName);
-                }
-            } catch (error) {
-                showToast(`Error deleting item: ${error.message}`, 'error');
-            }
-        }
-
-        function renderCollectionTable(collectionName, data) {
-            const isSectionCollection = collectionName.endsWith('Sections');
-            const schema = isSectionCollection ? SCHEMAS.sections : SCHEMAS[collectionName];
-            if (data.length === 0) {
-                 UI.contentArea.innerHTML = '<div class="card text-center py-20 text-gray-500 text-lg"><i class="fas fa-info-circle mr-2"></i> No items found. Click "Add New" to create one.</div>';
-                 return;
-            }
-            const headersToShow = schema.filter(s => ['title', 'name', 'posterUrl', 'logoUrl', 'order'].includes(s.name));
-            let tableHeaders = headersToShow.map(s => `<th class="p-4 text-left font-semibold">${s.label}</th>`).join('');
-            if (isSectionCollection) tableHeaders += `<th class="p-4 text-center font-semibold">Content</th>`;
-            tableHeaders += `<th class="p-4 text-right font-semibold">Actions</th>`;
-            let tableHTML = `<div class="card p-0 overflow-hidden"><div class="overflow-x-auto"><table class="min-w-full divide-y divide-gray-800 data-table"><thead><tr>${tableHeaders}</tr></thead><tbody class="divide-y divide-gray-800">`;
-            data.forEach(item => {
-                let rowData = headersToShow.map(s => {
-                    let value = item[s.name], cellContent = '<span class="text-gray-500 text-sm">N/A</span>';
-                    if (s.name === 'logoUrl' || s.name === 'posterUrl') cellContent = `<img src="${value}" alt="Thumb" class="h-10 w-16 object-cover rounded-md shadow-lg" onerror="this.src='https://via.placeholder.com/60x40.png?text=Ti'">`;
-                    else if (s.name === 'title' || s.name === 'name') cellContent = `<span class="font-semibold text-white">${value}</span>`;
-                    else if (value !== undefined) cellContent = `<span class="font-medium text-gray-300">${value}</span>`;
-                    return `<td class="p-4 text-sm">${cellContent}</td>`;
-                }).join('');
-                let sectionBtn = isSectionCollection ? `<td class="p-4 text-center"><button class="text-sky-400 hover:text-sky-300 manage-items-btn text-xs font-bold p-2 rounded-full bg-sky-900/40 hover:bg-sky-900/60 transition" data-id="${item.id}" data-type="${collectionName}" data-title="${item.title}"><i class="fas fa-cubes mr-1"></i> Manage</button></td>` : '';
-                tableHTML += `<tr data-id="${item.id}" class="transition-colors duration-150">${rowData}${sectionBtn}<td class="p-4 text-right space-x-2 whitespace-nowrap"><button class="text-yellow-500 hover:text-yellow-400 edit-btn p-2 rounded-full bg-gray-700/50 hover:bg-gray-700 transition" data-id="${item.id}" data-collection="${collectionName}"><i class="fas fa-edit"></i></button><button class="text-red-500 hover:text-red-400 delete-btn p-2 rounded-full bg-gray-700/50 hover:bg-gray-700 transition" data-id="${item.id}" data-collection="${collectionName}"><i class="fas fa-trash"></i></button></td></tr>`;
-            });
-            tableHTML += `</tbody></table></div></div>`;
-            UI.contentArea.innerHTML = tableHTML;
-            setupTableEventHandlers(collectionName);
-        }
-        
         const getMatchStatus = (startTime, endTime) => {
-            if (!startTime || !endTime) return { text: 'N/A', color: 'gray', icon: 'fa-question-circle' };
-            const now = new Date();
-            const start = startTime.toDate();
-            const end = endTime.toDate();
-            if (now < start) return { text: 'Upcoming', color: 'blue', icon: 'fa-calendar-alt' };
-            if (now >= start && now <= end) return { text: 'Live', color: 'red', icon: 'fa-signal' };
-            return { text: 'Finished', color: 'gray', icon: 'fa-check-circle' };
+            if (!startTime || !endTime) return { text: 'N/A', class: 'finished' };
+            const now = new Date(); const start = startTime.toDate(); const end = endTime.toDate();
+            if (now < start) return { text: 'Upcoming', class: 'upcoming' };
+            if (now >= start && now <= end) return { text: 'Live', class: 'live' };
+            return { text: 'Finished', class: 'finished' };
         };
 
-        function renderItemsTable(data, parentPath) {
-            const collectionType = State.editingParentCollection;
-            if (data.length === 0) {
-                 UI.itemsTableContainer.innerHTML = '<p class="text-center py-20 text-gray-500 text-lg"><i class="fas fa-info-circle mr-2"></i> No items. Click "Add New Item" above.</p>';
-                 return;
-            }
-            const isCricket = collectionType === 'cricketSections';
-            const schema = SCHEMAS.items(isCricket ? 'cricket' : 'movies');
-            const headersToShow = schema.filter(s => ['title', 'posterUrl', 'order'].includes(s.name));
-            let tableHeaders = headersToShow.map(s => `<th class="p-4 text-left font-semibold">${s.label}</th>`).join('');
-            if (isCricket) tableHeaders += `<th class="p-4 text-left font-semibold">Status</th>`;
-            tableHeaders += `<th class="p-4 text-right font-semibold">Actions</th>`;
-            let tableHTML = `<div class="overflow-x-auto"><table class="min-w-full divide-y divide-gray-800 data-table"><thead><tr>${tableHeaders}</tr></thead><tbody class="divide-y divide-gray-800">`;
-            data.forEach(item => {
-                let rowData = headersToShow.map(s => {
-                    let value = item[s.name], cellContent = '<span class="text-gray-500 text-sm">N/A</span>';
-                    if (s.name === 'posterUrl') cellContent = `<img src="${value}" alt="Thumb" class="h-12 w-auto object-cover rounded-md shadow-md" onerror="this.src='https://via.placeholder.com/60x90.png?text=Ti'">`;
-                    else if (value !== undefined) cellContent = `<span class="font-medium text-gray-300">${value}</span>`;
-                    return `<td class="p-4 text-sm">${cellContent}</td>`;
-                }).join('');
-                
-                let statusCell = '';
-                if(isCricket){
-                    const status = getMatchStatus(item.startTime, item.endTime);
-                    statusCell = `<td class="p-4 text-sm"><span class="px-3 py-1 text-xs font-bold bg-${status.color}-600 rounded-full text-white shadow-lg shadow-${status.color}-500/30"><i class="fas ${status.icon} text-xs mr-1"></i> ${status.text}</span></td>`;
+        const App = {
+            init() {
+                this.setupGlobalListeners();
+                this.loadInitialView();
+            },
+            setupGlobalListeners() {
+                UI.loginForm.addEventListener('submit', this.handleLogin);
+                UI.logoutBtn.onclick = this.handleLogout;
+                UI.modalCancelBtn.onclick = this.closeModal;
+                UI.dataForm.onsubmit = this.handleFormSubmit;
+                UI.saveOrderBtn.onclick = () => this.saveOrder(State.currentTab, State.sortableInstance, UI.saveOrderBtn);
+                UI.saveItemOrderBtn.onclick = () => this.saveOrder(`${State.editingParentCollection}/${State.currentSectionId}/items`, State.itemSortableInstance, UI.saveItemOrderBtn);
+                document.querySelectorAll('.tab-btn').forEach(btn => btn.onclick = (e) => this.switchTab(e.currentTarget));
+                UI.addBtn.onclick = () => { if(State.currentTab) this.openModal(State.currentTab); };
+                UI.itemAddBtn.onclick = () => { if(State.currentSectionId && State.editingParentCollection) this.openModal(State.editingParentCollection, null, `${State.editingParentCollection}/${State.currentSectionId}/items`); };
+            },
+            loadInitialView() {
+                if (localStorage.getItem('adminLoggedIn') === 'true') {
+                    UI.loginScreen.classList.add('hidden');
+                    UI.dashboard.classList.remove('hidden');
+                    document.querySelector('.tab-btn[data-tab="dashboard"]').click(); 
+                } else {
+                    UI.loginScreen.classList.remove('hidden');
+                    UI.dashboard.classList.add('hidden');
                 }
+            },
+            handleLogin(e) {
+                e.preventDefault();
+                UI.loginBtn.disabled = true; UI.loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>';
+                setTimeout(() => {
+                    if (document.getElementById('admin-user').value === ADMIN_USER && document.getElementById('admin-pass').value === ADMIN_PASS) {
+                        localStorage.setItem('adminLoggedIn', 'true');
+                        App.loadInitialView();
+                    } else {
+                        UI.loginError.textContent = 'Invalid credentials.'; UI.loginError.classList.remove('hidden');
+                    }
+                    UI.loginBtn.innerHTML = '<i class="fas fa-sign-in-alt mr-2"></i> Access Dashboard'; UI.loginBtn.disabled = false;
+                }, 500);
+            },
+            handleLogout() { localStorage.removeItem('adminLoggedIn'); App.loadInitialView(); },
+            switchTab(tabElement) {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                tabElement.classList.add('active');
+                State.currentTab = tabElement.dataset.tab;
+                const icon = tabElement.querySelector('i').className;
+                UI.currentTitle.innerHTML = `<i class="${icon} text-[var(--primary-color)] mr-2"></i> ${tabElement.textContent.trim()}`;
+                this.fetchDataForTab(State.currentTab);
+            },
+            showLoading(element) {
+                element.innerHTML = '<div class="text-center py-16 text-gray-500"><i class="fas fa-spinner fa-spin fa-3x text-[var(--primary-color)]"></i><p class="mt-4 text-lg">Loading...</p></div>';
+            },
+            async fetchDataForTab(tab) {
+                State.currentSectionId = null;
+                UI.contentArea.innerHTML = '';
+                UI.sectionItemsArea.classList.add('hidden');
+                UI.addBtn.classList.add('hidden');
+                UI.saveOrderBtn.classList.add('hidden');
+                if (State.sortableInstance) State.sortableInstance.destroy();
+                
+                if (tab === 'dashboard') { this.renderDashboard(); return; }
+                this.showLoading(UI.contentArea);
+                UI.addBtn.classList.remove('hidden');
 
-                tableHTML += `<tr data-id="${item.id}" class="transition-colors duration-150">${rowData}${statusCell}<td class="p-4 text-right space-x-2 whitespace-nowrap"><button class="text-yellow-500 hover:text-yellow-400 edit-item-btn p-2 rounded-full bg-gray-700/50 hover:bg-gray-700 transition" data-id="${item.id}" data-parent-path="${parentPath}"><i class="fas fa-edit"></i></button><button class="text-red-500 hover:text-red-400 delete-item-btn p-2 rounded-full bg-gray-700/50 hover:bg-gray-700 transition" data-id="${item.id}" data-parent-path="${parentPath}"><i class="fas fa-trash"></i></button></td></tr>`;
-            });
-            tableHTML += `</tbody></table></div>`;
-            UI.itemsTableContainer.innerHTML = tableHTML;
-            setupItemTableEventHandlers();
-        }
+                try {
+                    const q = query(collection(db, tab), orderBy("order", "asc"));
+                    const snapshot = await getDocs(q);
+                    const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    this.renderTable(tab, data, UI.contentArea, false);
+                } catch (error) {
+                    showToast(`Error: ${error.message}`, 'error');
+                }
+            },
+            async fetchSectionItems(collectionType, sectionId, sectionTitle) {
+                this.showLoading(UI.itemsTableContainer);
+                State.currentSectionId = sectionId; State.editingParentCollection = collectionType;
+                UI.sectionItemsArea.classList.remove('hidden'); UI.itemsTitle.textContent = `Items in: "${sectionTitle}"`;
+                UI.saveItemOrderBtn.classList.add('hidden');
+                if (State.itemSortableInstance) State.itemSortableInstance.destroy();
+
+                try {
+                    const itemPath = `${collectionType}/${sectionId}/items`;
+                    const q = query(collection(db, itemPath), orderBy("order", "asc"));
+                    const snapshot = await getDocs(q);
+                    const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data(), parentPath: itemPath }));
+                    this.renderTable(collectionType, data, UI.itemsTableContainer, true);
+                } catch (error) { showToast(`Error loading items: ${error.message}`, 'error'); }
+            },
+            async renderDashboard() {
+                this.showLoading(UI.contentArea);
+                const statsCols = ['banners', 'tv_categories', 'liveTV', 'moviesSections', 'cricketSections'];
+                const counts = await Promise.all(statsCols.map(c => getCountFromServer(collection(db, c))));
+                let statsHTML = '<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">';
+                statsHTML += statsCols.map((col, i) => `<div class="card border-l-4 border-blue-500 flex items-center justify-between"><p class="text-4xl font-extrabold text-white">${counts[i].data().count}</p><p class="text-sm font-medium text-gray-400 capitalize">${col.replace(/_/g, ' ')}</p></div>`).join('');
+                statsHTML += '</div>';
+
+                const upcomingMatchesQuery = query(collection(db, 'cricketSections/main/items'), where('startTime', '>', new Date()), orderBy('startTime', 'asc'), limit(5));
+                const upcomingSnap = await getDocs(upcomingMatchesQuery);
+                let upcomingHTML = '<div class="card mt-8"><h3 class="text-xl font-bold mb-4">Upcoming Matches</h3><ul class="space-y-3">';
+                if (upcomingSnap.empty) upcomingHTML += '<li class="text-gray-500">No upcoming matches.</li>';
+                upcomingSnap.forEach(doc => { const data = doc.data(); upcomingHTML += `<li class="flex justify-between items-center text-sm p-2 bg-gray-800/50 rounded-md"><span>${data.title}</span><span class="font-mono text-sky-400">${data.startTime.toDate().toLocaleString()}</span></li>`; });
+                upcomingHTML += '</ul></div>';
+
+                UI.contentArea.innerHTML = statsHTML + upcomingHTML;
+            },
+            renderTable(collectionName, data, container, isSubItems) {
+                const isSectionCollection = collectionName.endsWith('Sections');
+                const schema = isSubItems ? SCHEMAS.items(collectionName === 'cricketSections' ? 'cricket' : 'movies') : (isSectionCollection ? SCHEMAS.sections : SCHEMAS[collectionName]);
+                if (data.length === 0) { container.innerHTML = `<div class="card text-center py-20 text-gray-500"><i class="fas fa-info-circle mr-2"></i> No items found.</div>`; return; }
+                
+                let headers = ['Order', 'Title', 'Poster/Logo'];
+                if (isSubItems && collectionName === 'cricketSections') headers.push('Status');
+                if (isSectionCollection) headers.push('Content');
+                headers.push('Actions');
+                
+                let tableHTML = `<div class="card p-0 overflow-hidden"><div class="overflow-x-auto"><table class="min-w-full data-table"><thead><tr><th class="p-4 text-left w-12"></th>${headers.map(h => `<th class="p-4 text-left">${h}</th>`).join('')}</tr></thead><tbody id="${isSubItems ? 'items-table-body' : 'main-table-body'}" class="divide-y divide-[var(--border-color)]">`;
+                data.forEach(item => {
+                    let cells = [
+                        `<td class="p-4 text-sm font-mono text-gray-500">${item.order}</td>`,
+                        `<td class="p-4 text-sm font-semibold">${item.title || item.name}</td>`,
+                        `<td class="p-4"><img src="${item.posterUrl || item.logoUrl}" class="h-10 w-16 object-cover rounded-md shadow-lg" onerror="this.style.display='none'"></td>`
+                    ];
+                    if (isSubItems && collectionName === 'cricketSections') { const status = getMatchStatus(item.startTime, item.endTime); cells.push(`<td class="p-4"><span class="badge ${status.class}">${status.text}</span></td>`); }
+                    if (isSectionCollection) cells.push(`<td class="p-4 text-center"><button class="text-sky-400 hover:text-sky-300 manage-items-btn text-xs font-bold py-1 px-3 rounded-full bg-sky-900/40 hover:bg-sky-900/60" data-id="${item.id}" data-type="${collectionName}" data-title="${item.title}"><i class="fas fa-cubes mr-1"></i> Manage</button></td>`);
+                    const parentPath = item.parentPath ? `data-parent-path="${item.parentPath}"` : '';
+                    cells.push(`<td class="p-4 text-right space-x-2"><button class="text-yellow-500 hover:text-yellow-400 edit-btn p-2" data-id="${item.id}" ${parentPath}><i class="fas fa-edit"></i></button><button class="text-red-500 hover:text-red-400 delete-btn p-2" data-id="${item.id}" ${parentPath}><i class="fas fa-trash"></i></button></td>`);
+                    tableHTML += `<tr data-id="${item.id}">${`<td class="p-4 drag-handle"><i class="fas fa-grip-vertical"></i></td>` + cells.join('')}</tr>`;
+                });
+                tableHTML += `</tbody></table></div></div>`;
+                container.innerHTML = tableHTML;
+                
+                this.setupTableEventListeners(container, collectionName, isSubItems);
+                
+                const tableBody = document.getElementById(isSubItems ? 'items-table-body' : 'main-table-body');
+                const sortable = new Sortable(tableBody, {
+                    handle: '.drag-handle', animation: 150, ghostClass: 'sortable-ghost',
+                    onEnd: () => (isSubItems ? UI.saveItemOrderBtn : UI.saveOrderBtn).classList.remove('hidden')
+                });
+                if(isSubItems) State.itemSortableInstance = sortable; else State.sortableInstance = sortable;
+            },
+            async saveOrder(collectionPath, sortableInstance, saveBtn) {
+                if (!sortableInstance) return;
+                saveBtn.disabled = true; saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                const batch = writeBatch(db);
+                const orderedIds = sortableInstance.toArray();
+                orderedIds.forEach((id, index) => {
+                    const docRef = doc(db, collectionPath, id);
+                    batch.update(docRef, { order: index });
+                });
+                try {
+                    await batch.commit();
+                    showToast('Order saved successfully!', 'success');
+                    saveBtn.classList.add('hidden');
+                } catch (error) { showToast(`Error saving order: ${error.message}`, 'error'); }
+                finally { saveBtn.disabled = false; saveBtn.innerHTML = '<i class="fas fa-save mr-2"></i> Save Order'; }
+            },
+            setupTableEventListeners(container, collectionName, isSubItems) {
+                container.querySelectorAll('.edit-btn').forEach(btn => btn.onclick = () => this.openModal(isSubItems ? State.editingParentCollection : collectionName, btn.dataset.id, btn.dataset.parentPath));
+                container.querySelectorAll('.delete-btn').forEach(btn => btn.onclick = () => this.deleteItem(collectionName, btn.dataset.id, btn.dataset.parentPath));
+                container.querySelectorAll('.manage-items-btn').forEach(btn => btn.onclick = () => this.fetchSectionItems(btn.dataset.type, btn.dataset.id, btn.dataset.title));
+            },
+            async deleteItem(collectionName, id, parentPath) {
+                const finalPath = parentPath ? `${parentPath}/${id}` : `${collectionName}/${id}`;
+                if (!confirm(`Are you sure you want to delete this item? This is irreversible.`)) return;
+
+                try {
+                    await deleteDoc(doc(db, finalPath));
+                    showToast("Deleted successfully!", 'success');
+                    if (parentPath) {
+                        const sectionDoc = await getDoc(doc(db, State.editingParentCollection, State.currentSectionId));
+                        this.fetchSectionItems(State.editingParentCollection, State.currentSectionId, sectionDoc.data().title);
+                    } else { this.fetchDataForTab(collectionName); }
+                } catch (error) { showToast(`Error deleting item: ${error.message}`, 'error'); }
+            },
+            async openModal(collectionName, itemId = null, parentPath = null) {
+                State.editingId = itemId; State.editingParentCollection = collectionName;
+                const isItemEdit = !!parentPath || (itemId && State.currentSectionId);
+                let schema;
+                if (isItemEdit) { 
+                    const type = collectionName === 'cricketSections' ? 'cricket' : 'movies';
+                    schema = SCHEMAS.items(type);
+                    UI.modalTitle.textContent = `${itemId ? 'Edit' : 'Add'} Section Item`;
+                } else { 
+                    schema = collectionName.endsWith('Sections') ? SCHEMAS.sections : SCHEMAS[collectionName];
+                    UI.modalTitle.textContent = `${itemId ? 'Edit' : 'Add New'} ${collectionName.replace('Sections', ' Section').replace(/_/g, ' ')}`;
+                }
+                const fieldPromises = schema.map(async field => {
+                    let inputHtml;
+                    if (field.type === 'textarea') inputHtml = `<textarea id="${field.name}" name="${field.name}" class="input-style w-full p-3 rounded-lg" rows="4" placeholder="${field.label}"></textarea>`;
+                    else if (field.type === 'select') {
+                        const categories = await fetchCategories();
+                        const options = categories.map(cat => `<option value="${cat.name}">${cat.name}</option>`).join('');
+                        inputHtml = `<select id="${field.name}" name="${field.name}" class="select-style w-full p-3 rounded-lg"><option value="">Select Category</option>${options}</select>`;
+                    } else {
+                        const previewHtml = field.type === 'url' ? `<img class="image-preview" id="preview-${field.name}">` : '';
+                        inputHtml = `<div class="image-preview-container"><input type="${field.type || 'text'}" id="${field.name}" name="${field.name}" class="input-style w-full p-3 rounded-lg" value="${field.default || ''}" placeholder="${field.label}">${previewHtml}</div>`;
+                    }
+                    return `<div id="field-wrapper-${field.name}"><label class="block text-sm font-semibold mb-2">${field.label}${field.required ? ' <span class="text-red-500">*</span>' : ''}</label>${inputHtml}</div>`;
+                });
+                UI.modalFieldsContainer.innerHTML = (await Promise.all(fieldPromises)).join('');
+                if (itemId) {
+                    const finalPath = parentPath ? `${parentPath}/${itemId}` : `${collectionName}/${itemId}`;
+                    const docSnap = await getDoc(doc(db, finalPath));
+                    if (docSnap.exists()) { const data = docSnap.data();
+                        schema.forEach(field => {
+                            const input = document.getElementById(field.name); if (!input || data[field.name] === undefined) return;
+                            if (field.type === 'datetime-local') input.value = formatTimestampForInput(data[field.name]);
+                            else if (field.type === 'select') { setTimeout(() => input.value = data[field.name], 50); }
+                            else input.value = data[field.name];
+                            if (field.type === 'url' || field.name === 'videoUrl') input.dispatchEvent(new Event('input'));
+                        });
+                    }
+                }
+                UI.modalFieldsContainer.querySelectorAll("input[type='url']").forEach(input => {
+                    const preview = document.getElementById(`preview-${input.id}`);
+                    input.addEventListener('input', () => { if (preview) { preview.style.display = input.value ? 'block' : 'none'; preview.src = input.value; } });
+                });
+                if (document.getElementById('videoUrl')) { const videoUrlInput = document.getElementById('videoUrl'); const updateConditionalFields = () => schema.forEach(f => { if (f.condition) document.getElementById(`field-wrapper-${f.name}`).style.display = f.condition({ videoUrl: videoUrlInput.value }) ? 'block' : 'none'; }); videoUrlInput.addEventListener('input', updateConditionalFields); updateConditionalFields(); }
+                UI.modal.classList.remove('hidden');
+                setTimeout(() => { UI.modal.style.opacity = '1'; UI.modalContentWrapper.classList.remove('scale-95', 'opacity-0'); UI.modalContentWrapper.classList.add('scale-100', 'opacity-100'); }, 10);
+            },
+            closeModal() {
+                UI.modalContentWrapper.classList.add('scale-95', 'opacity-0'); UI.modalContentWrapper.classList.remove('scale-100', 'opacity-100');
+                setTimeout(() => { UI.modal.classList.add('hidden'); UI.dataForm.reset(); State.editingId = null; }, 300); 
+            },
+            async handleFormSubmit(e) {
+                e.preventDefault();
+                UI.modalSaveBtn.disabled = true; UI.modalSaveBtn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i>`;
+                const collectionName = State.editingParentCollection || State.currentTab;
+                let schema, finalCollectionPath, isItemOperation = !!State.currentSectionId, isUpdate = !!State.editingId;
+
+                if (isItemOperation) {
+                    schema = SCHEMAS.items(collectionName === 'cricketSections' ? 'cricket' : 'movies');
+                    finalCollectionPath = `${collectionName}/${State.currentSectionId}/items`;
+                } else {
+                    schema = collectionName.endsWith('Sections') ? SCHEMAS.sections : SCHEMAS[collectionName];
+                    finalCollectionPath = collectionName;
+                }
+                const formData = {};
+                schema.forEach(field => {
+                    const wrapper = document.getElementById(`field-wrapper-${field.name}`);
+                    if (wrapper && wrapper.style.display === 'none') return;
+                    const input = document.getElementById(field.name); if (!input) return;
+                    if (field.type === 'number') formData[field.name] = isNaN(parseInt(input.value)) ? 0 : parseInt(input.value);
+                    else if (field.type === 'datetime-local') formData[field.name] = input.value ? Timestamp.fromDate(new Date(input.value)) : null;
+                    else formData[field.name] = input.value;
+                });
+                
+                try {
+                    if (isUpdate) {
+                        await updateDoc(doc(db, finalCollectionPath, State.editingId), formData);
+                    } else {
+                        if (collectionName === 'tv_categories') State.categoryCache = null;
+                        formData.createdAt = serverTimestamp();
+                        await addDoc(collection(db, finalCollectionPath), formData);
+                    }
+                    App.closeModal();
+                    if (isItemOperation) {
+                        const sectionDoc = await getDoc(doc(db, collectionName, State.currentSectionId));
+                        App.fetchSectionItems(collectionName, State.currentSectionId, sectionDoc.data().title);
+                    } else { App.fetchDataForTab(collectionName); }
+                    showToast(`Successfully ${isUpdate ? 'updated' : 'added'}!`, 'success');
+                } catch (error) { showToast(`Error: ${error.message}`, 'error');
+                } finally { UI.modalSaveBtn.disabled = false; UI.modalSaveBtn.innerHTML = `<i class="fas fa-save mr-1"></i> Save Changes`; }
+            }
+        };
 
         async function fetchCategories() {
             if (State.categoryCache) return State.categoryCache;
@@ -357,175 +431,8 @@
             State.categoryCache = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             return State.categoryCache;
         }
-        
-        async function openModal(collectionName, itemId = null, parentPath = null) {
-            State.editingId = itemId; State.editingParentCollection = collectionName;
-            let schema, isItemEdit = !!parentPath || (itemId && State.currentSectionId);
-            if (isItemEdit) { 
-                const type = collectionName === 'cricketSections' ? 'cricket' : 'movies';
-                schema = SCHEMAS.items(type);
-                UI.modalTitle.innerHTML = `<i class="fas fa-edit mr-2 text-[var(--primary-color)]"></i> ${itemId ? 'Edit' : 'Add'} Section Item`;
-            } else { 
-                schema = collectionName.endsWith('Sections') ? SCHEMAS.sections : SCHEMAS[collectionName];
-                UI.modalTitle.innerHTML = `<i class="fas fa-plus-square mr-2 text-[var(--primary-color)]"></i> ${itemId ? 'Edit' : 'Add New'} ${collectionName.replace('Sections', ' Section').replace(/_/g, ' ')}`;
-            }
-            let fieldHtmlPromises = schema.map(async field => {
-                const required = field.required ? 'required' : ''; let inputHtml;
-                if (field.type === 'textarea') inputHtml = `<textarea id="${field.name}" name="${field.name}" class="input-style w-full p-3 rounded-lg focus:ring-1" rows="4" ${required} placeholder="Enter ${field.label}..."></textarea>`;
-                else if (field.type === 'select') {
-                    const categories = await fetchCategories();
-                    const options = categories.map(cat => `<option value="${cat.name}">${cat.name}</option>`).join('');
-                    inputHtml = `<select id="${field.name}" name="${field.name}" class="select-style w-full p-3 rounded-lg focus:ring-1" ${required}><option value="">-- Select Category --</option>${options}</select>`;
-                } else {
-                    const previewHtml = field.type === 'url' ? `<img src="https://via.placeholder.com/50x32.png?text=?" class="image-preview" id="preview-${field.name}">` : '';
-                    inputHtml = `<div class="image-preview-container"><input type="${field.type || 'text'}" id="${field.name}" name="${field.name}" class="input-style w-full p-3 rounded-lg focus:ring-1 ${field.type === 'url' ? 'pr-16' : ''}" ${required} value="${field.default || ''}" placeholder="Enter ${field.label}">${previewHtml}</div>`;
-                }
-                return `<div id="field-wrapper-${field.name}"><label for="${field.name}" class="block text-sm font-semibold mb-2 text-gray-300">${field.label}${field.required ? ' <span class="text-red-500">*</span>' : ''}</label>${inputHtml}</div>`;
-            });
-            UI.modalFieldsContainer.innerHTML = (await Promise.all(fieldHtmlPromises)).join('');
-            if (itemId) await loadItemForEditing(collectionName, itemId, parentPath, schema);
-            
-            UI.modalFieldsContainer.querySelectorAll("input[type='url']").forEach(input => {
-                const preview = document.getElementById(`preview-${input.id}`);
-                input.addEventListener('input', () => { if (preview) { preview.style.display = input.value ? 'block' : 'none'; preview.src = input.value || 'https://via.placeholder.com/50x32.png?text=?'; } });
-            });
 
-            if (document.getElementById('videoUrl')) {
-                const videoUrlInput = document.getElementById('videoUrl');
-                const updateConditionalFields = () => {
-                    schema.forEach(field => {
-                        if (field.condition) {
-                            const wrapper = document.getElementById(`field-wrapper-${field.name}`);
-                            if (wrapper) wrapper.style.display = field.condition({ videoUrl: videoUrlInput.value }) ? 'block' : 'none';
-                        }
-                    });
-                };
-                videoUrlInput.addEventListener('input', updateConditionalFields);
-                updateConditionalFields();
-            }
-
-            UI.modal.classList.remove('hidden');
-            setTimeout(() => { UI.modal.style.opacity = '1'; UI.modalContentWrapper.classList.remove('scale-95', 'opacity-0'); UI.modalContentWrapper.classList.add('scale-100', 'opacity-100'); }, 10);
-        }
-
-        function closeModal() {
-            UI.modalContentWrapper.classList.add('scale-95', 'opacity-0');
-            UI.modalContentWrapper.classList.remove('scale-100', 'opacity-100');
-            setTimeout(() => { UI.modal.classList.add('hidden'); UI.dataForm.reset(); State.editingId = null; }, 300); 
-        }
-
-        async function handleSubmit(e) {
-            e.preventDefault();
-            if(!UI.dataForm.checkValidity()) {
-                showToast('Please fill all required fields.', 'error');
-                UI.dataForm.querySelectorAll(':invalid').forEach(el => el.classList.add('is-invalid'));
-                return;
-            }
-
-            UI.modalSaveBtn.disabled = true;
-            UI.modalSaveBtn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i> Saving...`;
-
-            const collectionName = State.editingParentCollection || State.currentTab;
-            let schema, finalCollectionPath, isItemOperation = !!State.currentSectionId, isUpdate = !!State.editingId;
-
-            if (isItemOperation) {
-                const type = collectionName === 'cricketSections' ? 'cricket' : 'movies';
-                schema = SCHEMAS.items(type);
-                finalCollectionPath = `${collectionName}/${State.currentSectionId}/items`;
-            } else {
-                schema = collectionName.endsWith('Sections') ? SCHEMAS.sections : SCHEMAS[collectionName];
-                finalCollectionPath = collectionName;
-            }
-            const formData = {};
-            schema.forEach(field => {
-                const wrapper = document.getElementById(`field-wrapper-${field.name}`);
-                if (wrapper && wrapper.style.display === 'none') return;
-                const input = document.getElementById(field.name); if (!input) return;
-                
-                if (field.type === 'number') formData[field.name] = isNaN(parseInt(input.value)) ? 0 : parseInt(input.value);
-                else if (field.type === 'datetime-local') formData[field.name] = input.value ? Timestamp.fromDate(new Date(input.value)) : null;
-                else formData[field.name] = input.value;
-            });
-
-            // --- CORE LOGIC CHANGE: Set `isLive` based on time ---
-            if (collectionName === 'cricketSections' && isItemOperation) {
-                const now = new Date();
-                const start = formData.startTime ? formData.startTime.toDate() : null;
-                const end = formData.endTime ? formData.endTime.toDate() : null;
-                formData.isLive = (start && end && now >= start && now <= end);
-            }
-
-            try {
-                if (isUpdate) {
-                    await updateDoc(doc(db, finalCollectionPath, State.editingId), formData);
-                } else {
-                    if (collectionName === 'tv_categories') State.categoryCache = null;
-                    formData.createdAt = serverTimestamp();
-                    await addDoc(collection(db, finalCollectionPath), formData);
-                }
-                closeModal();
-                if (isItemOperation) {
-                    const sectionDoc = await getDoc(doc(db, collectionName, State.currentSectionId));
-                    fetchSectionItems(collectionName, State.currentSectionId, sectionDoc.data().title);
-                } else {
-                    fetchData(collectionName);
-                }
-                showToast(`Content successfully ${isUpdate ? 'updated' : 'added'}!`, 'success');
-            } catch (error) {
-                showToast(`Error saving data: ${error.message}`, 'error');
-            } finally {
-                UI.modalSaveBtn.disabled = false;
-                UI.modalSaveBtn.innerHTML = `<i class="fas fa-save mr-1"></i> Save Changes`;
-            }
-        }
-        
-        function setupTableEventHandlers(collectionName) {
-            UI.contentArea.querySelectorAll('.edit-btn').forEach(btn => btn.onclick = (e) => { e.stopPropagation(); openModal(collectionName, btn.dataset.id); });
-            UI.contentArea.querySelectorAll('.delete-btn').forEach(btn => btn.onclick = (e) => { e.stopPropagation(); deleteItem(collectionName, btn.dataset.id); });
-            UI.contentArea.querySelectorAll('.manage-items-btn').forEach(btn => btn.onclick = (e) => { e.stopPropagation(); UI.currentTitle.innerHTML = `<i class="fas fa-cubes text-sky-400 mr-2"></i> Items in: ${btn.dataset.title}`; fetchSectionItems(btn.dataset.type, btn.dataset.id, btn.dataset.title); });
-            if (!collectionName.endsWith('Sections')) UI.contentArea.querySelectorAll('.data-table tbody tr').forEach(row => row.onclick = () => { openModal(collectionName, row.dataset.id); });
-        }
-        
-        function setupItemTableEventHandlers() {
-             UI.itemsTableContainer.querySelectorAll('.edit-item-btn').forEach(btn => btn.onclick = (e) => { e.stopPropagation(); openModal(State.editingParentCollection, btn.dataset.id, btn.dataset.parentPath); });
-             UI.itemsTableContainer.querySelectorAll('.delete-item-btn').forEach(btn => btn.onclick = (e) => { e.stopPropagation(); deleteItem(State.editingParentCollection, btn.dataset.id, btn.dataset.parentPath); });
-             UI.itemsTableContainer.querySelectorAll('.data-table tbody tr').forEach(row => row.onclick = () => { const btn = row.querySelector('.edit-item-btn'); if (btn) openModal(State.editingParentCollection, btn.dataset.id, btn.dataset.parentPath); });
-        }
-
-        function setupGlobalListeners() {
-            UI.loginForm.addEventListener('submit', handleLogin);
-            UI.logoutBtn.onclick = handleLogout;
-            UI.modalCancelBtn.onclick = closeModal;
-            UI.dataForm.onsubmit = handleSubmit;
-            
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.onclick = (e) => {
-                    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                    e.currentTarget.classList.add('active');
-                    State.currentTab = e.currentTarget.dataset.tab;
-                    const icon = e.currentTarget.querySelector('i').className;
-                    UI.currentTitle.innerHTML = `<i class="${icon} text-[var(--primary-color)] mr-2"></i> ${e.currentTarget.textContent.trim()}`;
-                    fetchData(State.currentTab);
-                };
-            });
-            UI.addBtn.onclick = () => { if(State.currentTab) openModal(State.currentTab); };
-            UI.itemAddBtn.onclick = () => { if(State.currentSectionId && State.editingParentCollection) openModal(State.editingParentCollection, null, `${State.editingParentCollection}/${State.currentSectionId}/items`); else showToast("Error: Missing section context.", 'error'); };
-        }
-        
-        function loadInitialView() {
-             if (isAuthenticated()) {
-                UI.loginScreen.classList.add('hidden');
-                UI.dashboard.classList.remove('hidden');
-                document.querySelector('.tab-btn[data-tab="dashboard"]').click(); 
-             } else {
-                UI.loginScreen.classList.remove('hidden');
-                UI.dashboard.classList.add('hidden');
-             }
-        }
-        document.addEventListener('DOMContentLoaded', () => {
-            setupGlobalListeners();
-            loadInitialView();
-        });
+        document.addEventListener('DOMContentLoaded', () => App.init());
     </script>
 </body>
 </html>
