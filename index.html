@@ -18,9 +18,10 @@
         .tab-btn { padding: 12px 20px; transition: color 0.2s, background-color 0.2s; border-radius: 6px 6px 0 0; flex-shrink: 0; border-bottom: 3px solid transparent; }
         .tab-btn:hover { color: white; background-color: #1f2937; }
         .tab-btn.active { border-bottom: 3px solid var(--primary-color); color: var(--primary-color); font-weight: 700; background-color: #111827; }
-        .modal-overlay { background-color: rgba(0, 0, 0, 0.9); }
+        .modal-overlay { background-color: rgba(0, 0, 0, 0.9); backdrop-filter: blur(5px); }
         .input-style, .select-style { background-color: var(--accent-light); border: 1px solid #374151; color: var(--text-color); transition: border-color 0.2s, box-shadow 0.2s; }
         .input-style:focus, .select-style:focus { border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(255, 79, 0, 0.5); background-color: #0f172a; outline: none; }
+        .input-style.is-invalid { border-color: #ef4444; }
         .card { background-color: var(--card-bg); border: 1px solid #1f2937; border-radius: 12px; padding: 1.5rem; box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.3), 0 5px 15px -5px rgba(0, 0, 0, 0.2); }
         .data-table th { text-transform: uppercase; font-size: 0.7rem; color: #9ca3af; letter-spacing: 0.08em; background-color: #1f2937; }
         .data-table tr:nth-child(even) { background-color: rgba(255, 255, 255, 0.03); }
@@ -82,7 +83,7 @@
     <div id="data-modal" class="modal-overlay fixed inset-0 z-50 flex items-center justify-center p-4 transition-opacity duration-300 hidden">
         <div class="card w-full max-w-lg shadow-2xl transition-transform duration-300 transform scale-95 opacity-0 border-t-4 border-[var(--primary-color)]" id="modal-content-wrapper">
             <h3 id="modal-title" class="text-2xl font-bold mb-5 text-white border-b border-gray-700 pb-3"></h3>
-            <form id="data-form" class="space-y-4">
+            <form id="data-form" class="space-y-4" novalidate>
                 <div id="modal-fields-container" class="max-h-[70vh] overflow-y-auto pr-2"></div>
                 <div class="flex justify-end space-x-3 pt-4 border-t border-gray-700 mt-6">
                     <button type="button" id="modal-cancel-btn" class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition"><i class="fas fa-times-circle mr-1"></i> Cancel</button>
@@ -96,7 +97,7 @@
     
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-        import { getFirestore, collection, getDocs, query, orderBy, doc, setDoc, deleteDoc, addDoc, updateDoc, getDoc, serverTimestamp, getCountFromServer } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, query, orderBy, doc, deleteDoc, addDoc, updateDoc, getDoc, serverTimestamp, getCountFromServer, Timestamp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
         
         const firebaseConfig = { apiKey: "AIzaSyAb8YsPMOY53GxiycCL6G0MPZdgWe3nnyY", authDomain: "movie-92659.firebaseapp.com", projectId: "movie-92659", storageBucket: "movie-92659.appspot.com", messagingSenderId: "1090734362509", appId: "1:1090734362509:web:86be5583f6e8fcfdfa77c4" };
         const app = initializeApp(firebaseConfig);
@@ -113,18 +114,33 @@
             currentTab: null, currentSectionId: null, editingId: null, editingParentCollection: null, categoryCache: null,
         };
         
+        // --- UPDATED SCHEMAS ---
         const SCHEMAS = {
             banners: [ { name: 'title', label: 'Title', type: 'text', required: true }, { name: 'posterUrl', label: 'Poster URL (16:9 Banner)', type: 'url', required: true }, { name: 'link', label: 'Content Link (e.g. moviesSections/id/items/id)', type: 'text', required: true }, { name: 'order', label: 'Order', type: 'number', required: true, default: 0 } ],
             tv_categories: [ { name: 'name', label: 'Category Name', type: 'text', required: true } ],
             liveTV: [ { name: 'name', label: 'Channel Name', type: 'text', required: true }, { name: 'logoUrl', label: 'Logo URL (1:1 Icon)', type: 'url', required: true }, { name: 'streamUrl', label: 'Stream/Redirect Link (m3u8 or website)', type: 'url', required: true }, { name: 'category', label: 'Category', type: 'select', collection: 'tv_categories', required: true }, { name: 'order', label: 'Order', type: 'number', required: true, default: 0 } ],
             sections: [ { name: 'title', label: 'Section Title', type: 'text', required: true }, { name: 'order', label: 'Order', type: 'number', required: true, default: 0 } ],
-            items: (type) => [ { name: 'title', label: 'Title', type: 'text', required: true }, { name: 'posterUrl', label: `Poster URL (${type === 'cricket' ? '16:9 Thumbnail' : '2:3 Poster'})`, type: 'url', required: true }, { name: 'videoUrl', label: 'Video URL (M3U8/MPD/MP4/iFrame)', type: 'url', required: true }, { name: 'keyId', label: 'DRM Key ID (for .mpd streams)', type: 'text', required: false, condition: (data) => data.videoUrl?.toLowerCase().includes('.mpd') }, { name: 'contentKey', label: 'DRM Content Key (for .mpd streams)', type: 'text', required: false, condition: (data) => data.videoUrl?.toLowerCase().includes('.mpd') }, { name: 'description', label: 'Description', type: 'textarea', required: false }, { name: 'order', label: 'Order', type: 'number', required: true, default: 0 }, ...(type === 'cricket' ? [ { name: 'isLive', label: 'Is Live / Featured Match', type: 'boolean', required: false, default: false } ] : []) ]
+            items: (type) => [ { name: 'title', label: 'Title', type: 'text', required: true }, { name: 'posterUrl', label: `Poster URL (${type === 'cricket' ? '16:9 Thumbnail' : '2:3 Poster'})`, type: 'url', required: true }, { name: 'videoUrl', label: 'Video URL (M3U8/MPD/MP4/iFrame)', type: 'url', required: true }, { name: 'keyId', label: 'DRM Key ID (for .mpd streams)', type: 'text', required: false, condition: (data) => data.videoUrl?.toLowerCase().includes('.mpd') }, { name: 'contentKey', label: 'DRM Content Key (for .mpd streams)', type: 'text', required: false, condition: (data) => data.videoUrl?.toLowerCase().includes('.mpd') }, { name: 'description', label: 'Description', type: 'textarea', required: false }, { name: 'order', label: 'Order', type: 'number', required: true, default: 0 }, 
+            ...(type === 'cricket' ? [ 
+                { name: 'startTime', label: 'Match Start Time', type: 'datetime-local', required: true }, 
+                { name: 'endTime', label: 'Match End Time', type: 'datetime-local', required: true } 
+                // isLive is now handled programmatically, not as a form field.
+            ] : []) ]
         };
         
         function showToast(message, type = 'success') {
             UI.toast.textContent = message;
             UI.toast.className = `toast fixed top-5 right-5 z-[100] p-4 rounded-lg shadow-lg text-white max-w-sm transform translate-x-0 ${type === 'success' ? 'bg-green-600' : 'bg-red-600'}`;
             setTimeout(() => { UI.toast.style.transform = 'translateX(120%)'; }, 3000);
+        }
+
+        // --- BUG FIX: Function to correctly format date for datetime-local input ---
+        function formatTimestampForInput(timestamp) {
+            if (!(timestamp instanceof Timestamp)) return '';
+            const date = timestamp.toDate();
+            // Helper to add leading zero
+            const pad = (num) => num.toString().padStart(2, '0');
+            return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
         }
 
         async function loadItemForEditing(collectionName, itemId, parentPath, schema) {
@@ -138,20 +154,19 @@
                     for (const field of schema) {
                         const input = document.getElementById(field.name);
                         if (!input) continue;
-                        if (field.type === 'boolean') {
-                            input.checked = !!data[field.name];
-                        } else if (data[field.name] !== undefined) {
-                            if (field.type === 'select') {
-                                await new Promise(resolve => setTimeout(resolve, 50));
+                        if (data[field.name] !== undefined) {
+                            if (field.type === 'datetime-local') {
+                                input.value = formatTimestampForInput(data[field.name]);
+                            } else if (field.type === 'select') {
+                                await new Promise(resolve => setTimeout(resolve, 50)); // Wait for options to render
+                                input.value = data[field.name];
+                            } else {
+                                input.value = data[field.name];
                             }
-                            input.value = data[field.name];
-                            if (field.type === 'url') {
+                            if (field.type === 'url' || field.name === 'videoUrl') {
                                 input.dispatchEvent(new Event('input'));
                             }
                         }
-                    }
-                    if (document.getElementById('videoUrl')) {
-                        document.getElementById('videoUrl').dispatchEvent(new Event('input'));
                     }
                 }
             } catch (error) {
@@ -179,11 +194,7 @@
             }, 500);
         }
 
-        function handleLogout() {
-            localStorage.removeItem('adminLoggedIn');
-            loadInitialView();
-        }
-
+        function handleLogout() { localStorage.removeItem('adminLoggedIn'); loadInitialView(); }
         function isAuthenticated() { return localStorage.getItem('adminLoggedIn') === 'true'; }
         
         function showLoading(element) {
@@ -193,11 +204,7 @@
         async function renderDashboard() {
             UI.addBtn.classList.add('hidden');
             const stats = [
-                { name: 'Banners', collection: 'banners', icon: 'fa-image', color: 'blue' },
-                { name: 'TV Categories', collection: 'tv_categories', icon: 'fa-tags', color: 'indigo' },
-                { name: 'TV Channels', collection: 'liveTV', icon: 'fa-tv', color: 'green' },
-                { name: 'Movie Sections', collection: 'moviesSections', icon: 'fa-film', color: 'purple' },
-                { name: 'Cricket Sections', collection: 'cricketSections', icon: 'fa-baseball-bat-ball', color: 'orange' },
+                { name: 'Banners', collection: 'banners', icon: 'fa-image', color: 'blue' }, { name: 'TV Categories', collection: 'tv_categories', icon: 'fa-tags', color: 'indigo' }, { name: 'TV Channels', collection: 'liveTV', icon: 'fa-tv', color: 'green' }, { name: 'Movie Sections', collection: 'moviesSections', icon: 'fa-film', color: 'purple' }, { name: 'Cricket Sections', collection: 'cricketSections', icon: 'fa-baseball-bat-ball', color: 'orange' },
             ];
             UI.contentArea.innerHTML = '<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>';
             const grid = UI.contentArea.querySelector('.grid');
@@ -207,13 +214,9 @@
             stats.forEach((stat, index) => {
                 grid.innerHTML += `
                     <div class="card border-l-4 border-${stat.color}-500 flex items-center justify-between">
-                        <div>
-                            <p class="text-sm font-medium text-gray-400">${stat.name}</p>
-                            <p class="text-4xl font-extrabold text-white">${counts[index].data().count}</p>
-                        </div>
+                        <div><p class="text-sm font-medium text-gray-400">${stat.name}</p><p class="text-4xl font-extrabold text-white">${counts[index].data().count}</p></div>
                         <i class="fas ${stat.icon} text-5xl text-${stat.color}-500 opacity-20"></i>
-                    </div>
-                `;
+                    </div>`;
             });
         }
 
@@ -261,6 +264,7 @@
             const finalPath = parentPath ? `${parentPath}/${id}` : `${collectionName}/${id}`;
             const displayName = `Entry ${id.substring(0, 5)}...`;
             if (!confirm(`CONFIRM DELETION: Are you sure you want to delete ${displayName}? This action is irreversible.`)) return;
+
             try {
                 await deleteDoc(doc(db, finalPath));
                 showToast("Content deleted successfully!", 'success');
@@ -302,6 +306,16 @@
             UI.contentArea.innerHTML = tableHTML;
             setupTableEventHandlers(collectionName);
         }
+        
+        const getMatchStatus = (startTime, endTime) => {
+            if (!startTime || !endTime) return { text: 'N/A', color: 'gray', icon: 'fa-question-circle' };
+            const now = new Date();
+            const start = startTime.toDate();
+            const end = endTime.toDate();
+            if (now < start) return { text: 'Upcoming', color: 'blue', icon: 'fa-calendar-alt' };
+            if (now >= start && now <= end) return { text: 'Live', color: 'red', icon: 'fa-signal' };
+            return { text: 'Finished', color: 'gray', icon: 'fa-check-circle' };
+        };
 
         function renderItemsTable(data, parentPath) {
             const collectionType = State.editingParentCollection;
@@ -309,20 +323,28 @@
                  UI.itemsTableContainer.innerHTML = '<p class="text-center py-20 text-gray-500 text-lg"><i class="fas fa-info-circle mr-2"></i> No items. Click "Add New Item" above.</p>';
                  return;
             }
-            const schema = SCHEMAS.items(collectionType === 'cricketSections' ? 'cricket' : 'movies');
-            const headersToShow = schema.filter(s => ['title', 'posterUrl', 'isLive', 'order'].includes(s.name));
+            const isCricket = collectionType === 'cricketSections';
+            const schema = SCHEMAS.items(isCricket ? 'cricket' : 'movies');
+            const headersToShow = schema.filter(s => ['title', 'posterUrl', 'order'].includes(s.name));
             let tableHeaders = headersToShow.map(s => `<th class="p-4 text-left font-semibold">${s.label}</th>`).join('');
+            if (isCricket) tableHeaders += `<th class="p-4 text-left font-semibold">Status</th>`;
             tableHeaders += `<th class="p-4 text-right font-semibold">Actions</th>`;
             let tableHTML = `<div class="overflow-x-auto"><table class="min-w-full divide-y divide-gray-800 data-table"><thead><tr>${tableHeaders}</tr></thead><tbody class="divide-y divide-gray-800">`;
             data.forEach(item => {
                 let rowData = headersToShow.map(s => {
                     let value = item[s.name], cellContent = '<span class="text-gray-500 text-sm">N/A</span>';
                     if (s.name === 'posterUrl') cellContent = `<img src="${value}" alt="Thumb" class="h-12 w-auto object-cover rounded-md shadow-md" onerror="this.src='https://via.placeholder.com/60x90.png?text=Ti'">`;
-                    else if (s.name === 'isLive') cellContent = item[s.name] ? '<span class="px-3 py-1 text-xs font-bold bg-red-600 rounded-full text-white shadow-lg shadow-red-500/30"><i class="fas fa-signal text-xs mr-1"></i> LIVE</span>' : '<span class="px-3 py-1 text-xs font-semibold bg-gray-600 rounded-full text-gray-300">Default</span>';
                     else if (value !== undefined) cellContent = `<span class="font-medium text-gray-300">${value}</span>`;
                     return `<td class="p-4 text-sm">${cellContent}</td>`;
                 }).join('');
-                tableHTML += `<tr data-id="${item.id}" class="transition-colors duration-150">${rowData}<td class="p-4 text-right space-x-2 whitespace-nowrap"><button class="text-yellow-500 hover:text-yellow-400 edit-item-btn p-2 rounded-full bg-gray-700/50 hover:bg-gray-700 transition" data-id="${item.id}" data-parent-path="${parentPath}"><i class="fas fa-edit"></i></button><button class="text-red-500 hover:text-red-400 delete-item-btn p-2 rounded-full bg-gray-700/50 hover:bg-gray-700 transition" data-id="${item.id}" data-parent-path="${parentPath}"><i class="fas fa-trash"></i></button></td></tr>`;
+                
+                let statusCell = '';
+                if(isCricket){
+                    const status = getMatchStatus(item.startTime, item.endTime);
+                    statusCell = `<td class="p-4 text-sm"><span class="px-3 py-1 text-xs font-bold bg-${status.color}-600 rounded-full text-white shadow-lg shadow-${status.color}-500/30"><i class="fas ${status.icon} text-xs mr-1"></i> ${status.text}</span></td>`;
+                }
+
+                tableHTML += `<tr data-id="${item.id}" class="transition-colors duration-150">${rowData}${statusCell}<td class="p-4 text-right space-x-2 whitespace-nowrap"><button class="text-yellow-500 hover:text-yellow-400 edit-item-btn p-2 rounded-full bg-gray-700/50 hover:bg-gray-700 transition" data-id="${item.id}" data-parent-path="${parentPath}"><i class="fas fa-edit"></i></button><button class="text-red-500 hover:text-red-400 delete-item-btn p-2 rounded-full bg-gray-700/50 hover:bg-gray-700 transition" data-id="${item.id}" data-parent-path="${parentPath}"><i class="fas fa-trash"></i></button></td></tr>`;
             });
             tableHTML += `</tbody></table></div>`;
             UI.itemsTableContainer.innerHTML = tableHTML;
@@ -337,8 +359,7 @@
         }
         
         async function openModal(collectionName, itemId = null, parentPath = null) {
-            State.editingId = itemId;
-            State.editingParentCollection = collectionName;
+            State.editingId = itemId; State.editingParentCollection = collectionName;
             let schema, isItemEdit = !!parentPath || (itemId && State.currentSectionId);
             if (isItemEdit) { 
                 const type = collectionName === 'cricketSections' ? 'cricket' : 'movies';
@@ -349,17 +370,15 @@
                 UI.modalTitle.innerHTML = `<i class="fas fa-plus-square mr-2 text-[var(--primary-color)]"></i> ${itemId ? 'Edit' : 'Add New'} ${collectionName.replace('Sections', ' Section').replace(/_/g, ' ')}`;
             }
             let fieldHtmlPromises = schema.map(async field => {
-                const required = field.required ? 'required' : '';
-                let inputHtml;
+                const required = field.required ? 'required' : ''; let inputHtml;
                 if (field.type === 'textarea') inputHtml = `<textarea id="${field.name}" name="${field.name}" class="input-style w-full p-3 rounded-lg focus:ring-1" rows="4" ${required} placeholder="Enter ${field.label}..."></textarea>`;
-                else if (field.type === 'boolean') inputHtml = `<div class="flex items-center space-x-3 p-3 bg-gray-700 rounded-lg"><input type="checkbox" id="${field.name}" name="${field.name}" class="h-5 w-5 rounded border-gray-600 checked:bg-[var(--primary-color)] focus:ring-[var(--primary-color)] text-[var(--primary-color)]"><label for="${field.name}" class="text-gray-200 font-medium cursor-pointer">${field.label}</label></div>`;
                 else if (field.type === 'select') {
                     const categories = await fetchCategories();
                     const options = categories.map(cat => `<option value="${cat.name}">${cat.name}</option>`).join('');
                     inputHtml = `<select id="${field.name}" name="${field.name}" class="select-style w-full p-3 rounded-lg focus:ring-1" ${required}><option value="">-- Select Category --</option>${options}</select>`;
                 } else {
                     const previewHtml = field.type === 'url' ? `<img src="https://via.placeholder.com/50x32.png?text=?" class="image-preview" id="preview-${field.name}">` : '';
-                    inputHtml = `<div class="image-preview-container"><input type="${field.type || 'text'}" id="${field.name}" name="${field.name}" class="input-style w-full p-3 rounded-lg focus:ring-1 pr-16" ${required} value="${field.default || ''}" placeholder="Enter ${field.label}">${previewHtml}</div>`;
+                    inputHtml = `<div class="image-preview-container"><input type="${field.type || 'text'}" id="${field.name}" name="${field.name}" class="input-style w-full p-3 rounded-lg focus:ring-1 ${field.type === 'url' ? 'pr-16' : ''}" ${required} value="${field.default || ''}" placeholder="Enter ${field.label}">${previewHtml}</div>`;
                 }
                 return `<div id="field-wrapper-${field.name}"><label for="${field.name}" class="block text-sm font-semibold mb-2 text-gray-300">${field.label}${field.required ? ' <span class="text-red-500">*</span>' : ''}</label>${inputHtml}</div>`;
             });
@@ -368,12 +387,7 @@
             
             UI.modalFieldsContainer.querySelectorAll("input[type='url']").forEach(input => {
                 const preview = document.getElementById(`preview-${input.id}`);
-                input.addEventListener('input', () => {
-                    if (preview) {
-                        preview.style.display = input.value ? 'block' : 'none';
-                        preview.src = input.value || 'https://via.placeholder.com/50x32.png?text=?';
-                    }
-                });
+                input.addEventListener('input', () => { if (preview) { preview.style.display = input.value ? 'block' : 'none'; preview.src = input.value || 'https://via.placeholder.com/50x32.png?text=?'; } });
             });
 
             if (document.getElementById('videoUrl')) {
@@ -402,7 +416,15 @@
 
         async function handleSubmit(e) {
             e.preventDefault();
+            if(!UI.dataForm.checkValidity()) {
+                showToast('Please fill all required fields.', 'error');
+                UI.dataForm.querySelectorAll(':invalid').forEach(el => el.classList.add('is-invalid'));
+                return;
+            }
+
             UI.modalSaveBtn.disabled = true;
+            UI.modalSaveBtn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i> Saving...`;
+
             const collectionName = State.editingParentCollection || State.currentTab;
             let schema, finalCollectionPath, isItemOperation = !!State.currentSectionId, isUpdate = !!State.editingId;
 
@@ -418,20 +440,27 @@
             schema.forEach(field => {
                 const wrapper = document.getElementById(`field-wrapper-${field.name}`);
                 if (wrapper && wrapper.style.display === 'none') return;
-                const input = document.getElementById(field.name);
-                if (!input) return;
+                const input = document.getElementById(field.name); if (!input) return;
+                
                 if (field.type === 'number') formData[field.name] = isNaN(parseInt(input.value)) ? 0 : parseInt(input.value);
-                else if (field.type === 'boolean') formData[field.name] = input.checked;
+                else if (field.type === 'datetime-local') formData[field.name] = input.value ? Timestamp.fromDate(new Date(input.value)) : null;
                 else formData[field.name] = input.value;
             });
+
+            // --- CORE LOGIC CHANGE: Set `isLive` based on time ---
+            if (collectionName === 'cricketSections' && isItemOperation) {
+                const now = new Date();
+                const start = formData.startTime ? formData.startTime.toDate() : null;
+                const end = formData.endTime ? formData.endTime.toDate() : null;
+                formData.isLive = (start && end && now >= start && now <= end);
+            }
+
             try {
                 if (isUpdate) {
                     await updateDoc(doc(db, finalCollectionPath, State.editingId), formData);
                 } else {
-                    if (collectionName === 'tv_categories') {
-                        State.categoryCache = null;
-                    }
-                    if (isItemOperation || collectionName === 'liveTV') formData.createdAt = serverTimestamp();
+                    if (collectionName === 'tv_categories') State.categoryCache = null;
+                    formData.createdAt = serverTimestamp();
                     await addDoc(collection(db, finalCollectionPath), formData);
                 }
                 closeModal();
@@ -446,6 +475,7 @@
                 showToast(`Error saving data: ${error.message}`, 'error');
             } finally {
                 UI.modalSaveBtn.disabled = false;
+                UI.modalSaveBtn.innerHTML = `<i class="fas fa-save mr-1"></i> Save Changes`;
             }
         }
         
